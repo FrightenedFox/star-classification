@@ -1,0 +1,1 @@
+# Star classification - Statistical data analysis project 
