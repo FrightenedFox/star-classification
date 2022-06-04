@@ -1769,8 +1769,185 @@ pre code {
 
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoibGlicmFyeShkcGx5cikifQ== -->
+<pre class="r"><code>library(dplyr)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTogJ2RwbHlyJ1xuIn0= -->
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSAncGFja2FnZTpzdGF0cyc6XG5cbiAgICBmaWx0ZXIsIGxhZ1xuIn0= -->
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlN0YXIgY2xhc3NpZmljYXRpb24iDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQoNCg==</div>
+    filter, lag</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSAncGFja2FnZTpiYXNlJzpcblxuICAgIGludGVyc2VjdCwgc2V0ZGlmZiwgc2V0ZXF1YWwsIHVuaW9uXG4ifQ== -->
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoibGlicmFyeSh0aWR5dmVyc2UpIn0= -->
+<pre class="r"><code>library(tidyverse)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-message-begin eyJkYXRhIjoi4pSA4pSAIEF0dGFjaGluZyBwYWNrYWdlcyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlIDEuMy4xIOKUgOKUgFxuIn0= -->
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoi4pyUIGdncGxvdDIgMy4zLjYgICAgIOKclCBwdXJyciAgIDAuMy40XG7inJQgdGliYmxlICAzLjEuNyAgICAg4pyUIHN0cmluZ3IgMS40LjBcbuKclCB0aWR5ciAgIDEuMi4wICAgICDinJQgZm9yY2F0cyAwLjUuMVxu4pyUIHJlYWRyICAgMi4xLjIgICAgIFxuIn0= -->
+<pre><code>✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+✔ tibble  3.1.7     ✔ stringr 1.4.0
+✔ tidyr   1.2.0     ✔ forcats 0.5.1
+✔ readr   2.1.2     </code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoi4pSA4pSAIENvbmZsaWN0cyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlX2NvbmZsaWN0cygpIOKUgOKUgFxu4pyWIGRwbHlyOjpmaWx0ZXIoKSBtYXNrcyBzdGF0czo6ZmlsdGVyKClcbuKcliBkcGx5cjo6bGFnKCkgICAgbWFza3Mgc3RhdHM6OmxhZygpXG4ifQ== -->
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoibGlicmFyeShtb21lbnRzKSJ9 -->
+<pre class="r"><code>library(moments)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImZ1bGxfZGYgPC0gcmVhZC5jc3YoXCJzdGFyLWNsYXNzaWZpY3RhaW9uLWRhdGEuY3N2XCIpIiwiZGYgPC0gZnVsbF9kZlstNzk1NDQsICFuYW1lcyhmdWxsX2RmKSAlaW4lXG4gICAgICAgIGMoXCJyZXJ1bl9JRFwiLCBcInJ1bl9JRFwiLCBcImNhbV9jb2xcIiwgXCJmaWVsZF9JRFwiLCBcInNwZWNfb2JqX0lEXCIsIFwicGxhdGVcIiwgXCJNSkRcIiwgXCJmaWJlcl9JRFwiKV0iLCJzdW1tYXJ5KGRmKSJdfQ== -->
+<pre class="r"><code>full_df &lt;- read.csv(&quot;star-classifictaion-data.csv&quot;)
+df &lt;- full_df[-79544, !names(full_df) %in%
+        c(&quot;rerun_ID&quot;, &quot;run_ID&quot;, &quot;cam_col&quot;, &quot;field_ID&quot;, &quot;spec_obj_ID&quot;, &quot;plate&quot;, &quot;MJD&quot;, &quot;fiber_ID&quot;)]
+summary(df)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICBvYmpfSUQgICAgICAgICAgICAgIGFscGhhICAgICAgICAgICAgICBkZWx0YSAgICAgICAgICAgICAgIHUgICAgICAgIFxuIE1pbi4gICA6MS4yMzhlKzE4ICAgTWluLiAgIDogIDAuMDA1NSAgIE1pbi4gICA6LTE4Ljc4NSAgIE1pbi4gICA6MTEuMDAgIFxuIDFzdCBRdS46MS4yMzhlKzE4ICAgMXN0IFF1LjoxMjcuNTE3NyAgIDFzdCBRdS46ICA1LjE0NyAgIDFzdCBRdS46MjAuMzUgIFxuIE1lZGlhbiA6MS4yMzhlKzE4ICAgTWVkaWFuIDoxODAuOTAwNSAgIE1lZGlhbiA6IDIzLjY0NiAgIE1lZGlhbiA6MjIuMTggIFxuIE1lYW4gICA6MS4yMzhlKzE4ICAgTWVhbiAgIDoxNzcuNjI4NyAgIE1lYW4gICA6IDI0LjEzNiAgIE1lYW4gICA6MjIuMDggIFxuIDNyZCBRdS46MS4yMzhlKzE4ICAgM3JkIFF1LjoyMzMuODk1MCAgIDNyZCBRdS46IDM5LjkwMiAgIDNyZCBRdS46MjMuNjkgIFxuIE1heC4gICA6MS4yMzhlKzE4ICAgTWF4LiAgIDozNTkuOTk5OCAgIE1heC4gICA6IDgzLjAwMSAgIE1heC4gICA6MzIuNzggIFxuICAgICAgIGcgICAgICAgICAgICAgICByICAgICAgICAgICAgICAgIGkgICAgICAgICAgICAgICB6ICAgICAgICAgXG4gTWluLiAgIDoxMC41MCAgIE1pbi4gICA6IDkuODIyICAgTWluLiAgIDogOS40NyAgIE1pbi4gICA6IDkuNjEyICBcbiAxc3QgUXUuOjE4Ljk3ICAgMXN0IFF1LjoxOC4xMzYgICAxc3QgUXUuOjE3LjczICAgMXN0IFF1LjoxNy40NjEgIFxuIE1lZGlhbiA6MjEuMTAgICBNZWRpYW4gOjIwLjEyNSAgIE1lZGlhbiA6MTkuNDEgICBNZWRpYW4gOjE5LjAwNSAgXG4gTWVhbiAgIDoyMC42MyAgIE1lYW4gICA6MTkuNjQ2ICAgTWVhbiAgIDoxOS4wOCAgIE1lYW4gICA6MTguNzY5ICBcbiAzcmQgUXUuOjIyLjEyICAgM3JkIFF1LjoyMS4wNDUgICAzcmQgUXUuOjIwLjQwICAgM3JkIFF1LjoxOS45MjEgIFxuIE1heC4gICA6MzEuNjAgICBNYXguICAgOjI5LjU3MiAgIE1heC4gICA6MzIuMTQgICBNYXguICAgOjI5LjM4NCAgXG4gICAgY2xhc3MgICAgICAgICAgICAgIHJlZHNoaWZ0ICAgICAgICBcbiBMZW5ndGg6OTk5OTkgICAgICAgTWluLiAgIDotMC4wMDk5NzEgIFxuIENsYXNzIDpjaGFyYWN0ZXIgICAxc3QgUXUuOiAwLjA1NDUyMiAgXG4gTW9kZSAgOmNoYXJhY3RlciAgIE1lZGlhbiA6IDAuNDI0MTc2ICBcbiAgICAgICAgICAgICAgICAgICAgTWVhbiAgIDogMC41NzY2NjcgIFxuICAgICAgICAgICAgICAgICAgICAzcmQgUXUuOiAwLjcwNDE3MiAgXG4gICAgICAgICAgICAgICAgICAgIE1heC4gICA6IDcuMDExMjQ1ICBcbiJ9 -->
+<pre><code>     obj_ID              alpha              delta               u        
+ Min.   :1.238e+18   Min.   :  0.0055   Min.   :-18.785   Min.   :11.00  
+ 1st Qu.:1.238e+18   1st Qu.:127.5177   1st Qu.:  5.147   1st Qu.:20.35  
+ Median :1.238e+18   Median :180.9005   Median : 23.646   Median :22.18  
+ Mean   :1.238e+18   Mean   :177.6287   Mean   : 24.136   Mean   :22.08  
+ 3rd Qu.:1.238e+18   3rd Qu.:233.8950   3rd Qu.: 39.902   3rd Qu.:23.69  
+ Max.   :1.238e+18   Max.   :359.9998   Max.   : 83.001   Max.   :32.78  
+       g               r                i               z         
+ Min.   :10.50   Min.   : 9.822   Min.   : 9.47   Min.   : 9.612  
+ 1st Qu.:18.97   1st Qu.:18.136   1st Qu.:17.73   1st Qu.:17.461  
+ Median :21.10   Median :20.125   Median :19.41   Median :19.005  
+ Mean   :20.63   Mean   :19.646   Mean   :19.08   Mean   :18.769  
+ 3rd Qu.:22.12   3rd Qu.:21.045   3rd Qu.:20.40   3rd Qu.:19.921  
+ Max.   :31.60   Max.   :29.572   Max.   :32.14   Max.   :29.384  
+    class              redshift        
+ Length:99999       Min.   :-0.009971  
+ Class :character   1st Qu.: 0.054522  
+ Mode  :character   Median : 0.424176  
+                    Mean   : 0.576667  
+                    3rd Qu.: 0.704172  
+                    Max.   : 7.011245  </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGRmJGcsIGRmJHIpIn0= -->
+<pre class="r"><code>cor(df$g, df$r)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuOTMyOTk2MVxuIn0= -->
+<pre><code>[1] 0.9329961</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbIm1lYW4uaGFybW9uaWMgPC0gZnVuY3Rpb24gKHNlcmllcykge1xuICByZXR1cm4obGVuZ3RoKHNlcmllcykgLyBzdW0oMSAvIHNlcmllcykpXG59IiwiIiwiIiwibWVhbi5nZW9tZXRyaWMgPC0gZnVuY3Rpb24gKHNlcmllcykge1xuICByZXR1cm4ocHJvZChzZXJpZXMpIF4gKDEgLyBsZW5ndGgoc2VyaWVzKSkpXG59IiwiIiwiIiwibW9kZS5zdGF0IDwtIGZ1bmN0aW9uIChzZXJpZXMpIHtcbiAgdXggPC0gdW5pcXVlKHNlcmllcylcbiAgdGFiIDwtIHRhYnVsYXRlKG1hdGNoKHNlcmllcywgdXgpKVxuICByZXR1cm4odXhbdGFiID09IG1heCh0YWIpXSlcbn0iLCIiLCIiLCJhdmVyYWdlLmRldmlhdGlvbiA8LSBmdW5jdGlvbiAoc2VyaWVzLCBmcm9tX3ZhbHVlKSB7XG4gIHJldHVybihzdW0oYWJzKHNlcmllcyAtIGZyb21fdmFsdWUpKSAvIGxlbmd0aChzZXJpZXMpKVxufSIsIiIsIiIsImNvZWZmaWNpZW50Lm9mLnZhcmlhdGlvbiA8LSBmdW5jdGlvbiAoc2VyaWVzKSB7XG4gIHJldHVybihzZChzZXJpZXMpIC8gbWVhbihzZXJpZXMpKVxufSIsIiIsIiIsInF1YW50aWxlLmRldmlhdGlvbiA8LSBmdW5jdGlvbiAoc2VyaWVzKSB7XG4gIHJldHVybigocXVhbnRpbGUoc2VyaWVzLCAwLjc1KSAtIHF1YW50aWxlKHNlcmllcywgMC4yNSkpIC8gMilcbn0iLCIiLCIiLCJhc3ltbWV0cnkuY29lZmZpY2llbnQgPC0gZnVuY3Rpb24gKHNlcmllcykge1xuICByZXR1cm4oYWxsLm1vbWVudHMoc2VyaWVzLCBjZW50cmFsID0gVFJVRSwgYWJzb2x1dGUgPSBGQUxTRSwgb3JkZXIubWF4ID0gMylbNF0gLyAoc2Qoc2VyaWVzKSBeIDMpKVxufSIsIiIsIiIsImRlc2NyaWJlIDwtIGZ1bmN0aW9uIChzZXJpZXMpIHtcbiAgc3JlZG5pYS5hcnl0bWV0eWN6bmEgPC0gbWVhbihzZXJpZXMpXG4gIHNyZWRuaWEuaGFybW9uaWN6bmEgPC0gbWVhbi5oYXJtb25pYyhzZXJpZXMpXG4gIHNyZWRuaWEuZ2VvbWV0cnljem5hIDwtIG1lYW4uZ2VvbWV0cmljKHNlcmllcylcbiAga3dhbnR5bGUgPC0gcXVhbnRpbGUoc2VyaWVzLCBjKDAuMjUsIDAuNSwgMC43NSkpXG4gIGRvbWluYW50YSA8LSBtZWFuKG1vZGUuc3RhdChzZXJpZXMpKVxuICBvZGNoeWxlbmllLnByemVjaWV0bmUubWVkaWFuYSA8LSBhdmVyYWdlLmRldmlhdGlvbihzZXJpZXMsIG1lYW4oc2VyaWVzKSlcbiAgb2RjaHlsZW5pZS5wcnplY2lldG5lLnNyZWRuaWEgPC0gYXZlcmFnZS5kZXZpYXRpb24oc2VyaWVzLCBtZWRpYW4oc2VyaWVzKSlcbiAgd2FyaWFuY2phIDwtIHZhcihzZXJpZXMpXG4gIG9kY2h5bGVuaWUuc3RhbmRhcmRvd2UgPC0gc2Qoc2VyaWVzKVxuICB3c3BvbGN6eW5uaWsuem1pZW5ub2NpIDwtIGNvZWZmaWNpZW50Lm9mLnZhcmlhdGlvbihzZXJpZXMpXG4gIG9kY2h5bGVuaWUuY3dpYXJ0a293ZSA8LSBxdWFudGlsZS5kZXZpYXRpb24oc2VyaWVzKVxuICByb3pzdGVwIDwtIGRpZmYocmFuZ2Uoc2VyaWVzKSlcbiAgd3Nwb2xjenlubmlrLmFzeW1ldHJpaSA8LSBza2V3bmVzcyhzZXJpZXMpXG4gIHdza2F6bmlrLmFzeW1ldHJpaSA8LSBhc3ltbWV0cnkuY29lZmZpY2llbnQoc2VyaWVzKVxuICB3c3BvbGN6eW5uaWsuc3BsYXN6Y3plbmlhIDwtIGt1cnRvc2lzKHNlcmllcylcbiAgbW9tZW50eSA8LSBhbGwubW9tZW50cyhzZXJpZXMsIGNlbnRyYWwgPSBGQUxTRSwgYWJzb2x1dGUgPSBGQUxTRSwgb3JkZXIubWF4ID0gNClcbiAgbW9tZW50eS5jZW50cmFsbmUgPC0gYWxsLm1vbWVudHMoc2VyaWVzLCBjZW50cmFsID0gVFJVRSwgYWJzb2x1dGUgPSBGQUxTRSwgb3JkZXIubWF4ID0gNClcbiAgbW9tZW50eS5jZW50cmFsbmUuYWJzb2x1dG5lIDwtIGFsbC5tb21lbnRzKHNlcmllcywgY2VudHJhbCA9IFRSVUUsIGFic29sdXRlID0gVFJVRSwgb3JkZXIubWF4ID0gNClcbiAgZGF0YS5mcmFtZShcbiAgICAgICAgICBTdGF0eXN0eWthPWMoXCLFmnJlZG5pYSBhcnl0bWV0eWN6bmFcIiwgXCLFmnJlZG5pYSBoYXJtb25pY3puYVwiLCBcIsWacmVkbmlhIGdlb21ldHJ5Y3puYVwiLFxuICAgICAgICAgICAgICAgICAgICAgICBcIkt3YW50eWwgcnrEmWR1IDEvNFwiLCBcIkt3YW50eWwgcnrEmWR1IDIvNCAobWVkaWFuYSlcIiwgXCJLd2FydHlsIHJ6xJlkdSAzLzRcIixcbiAgICAgICAgICAgICAgICAgICAgICAgXCJEb21pbmFudGFcIiwgXCJPZGNoeWxlbmllIHByemVjacSZdG5lIG9kIG1lZGlhbnlcIixcbiAgICAgICAgICAgICAgICAgICAgICAgXCJPZGNoeWxlbmllIHByemVjacSZdG5lIG9kIMWbcmVkbmllalwiLCBcIldhcmlhbmNqYVwiLCBcIk9kY2h5bGVuaWUgc3RhbmRhcmRvd2VcIixcbiAgICAgICAgICAgICAgICAgICAgICAgXCJXc3DDs8WCY3p5bm5payB6bWllbm5vxZtjaVwiLCBcIk9kY2h5bGVuaWUgxId3aWFydGtvd2VcIiwgXCJSb3pzdMSZcFwiLFxuICAgICAgICAgICAgICAgICAgICAgICBcIldzcMOzxYJjenlubmlrIGFzeW1ldHJpaVwiLCBcIldza2HFum5payBhc3ltZXRyaWlcIiwgXCJXc3DDs8WCY3p5bm5payBzcMWCYXN6Y3plbmlhXCIsXG4gICAgICAgICAgICAgICAgICAgICAgIFwiTW9tZW50IHp3eWvFgnkgMSByesSZZHVcIiwgXCJNb21lbnQgend5a8WCeSAyIHJ6xJlkdVwiLCBcIk1vbWVudCB6d3lrxYJ5IDMgcnrEmWR1XCIsXG4gICAgICAgICAgICAgICAgICAgICAgIFwiTW9tZW50IGNlbnRyYWxueSAxIHJ6xJlkdVwiLCBcIk1vbWVudCBjZW50cmFsbnkgMiByesSZZHVcIiwgXCJNb21lbnQgY2VudHJhbG55IDMgcnrEmWR1XCIsXG4gICAgICAgICAgICAgICAgICAgICAgIFwiTW9tZW50IGNlbnRyYWxueSBhYnNvbHV0bnkgMSByesSZZHVcIiwgXCJNb21lbnQgY2VudHJhbG55IGFic29sdXRueSAyIHJ6xJlkdVwiLFxuICAgICAgICAgICAgICAgICAgICAgICBcIk1vbWVudCBjZW50cmFsbnkgYWJzb2x1dG55IDMgcnrEmWR1XCJcbiAgICAgICAgICApLFxuICAgICAgICAgIFdhcnRvc2M9YyhzcmVkbmlhLmFyeXRtZXR5Y3puYSwgc3JlZG5pYS5oYXJtb25pY3puYSwgc3JlZG5pYS5nZW9tZXRyeWN6bmEsXG4gICAgICAgICAgICAgICAgICAgIGt3YW50eWxlWzFdLCBrd2FudHlsZVsyXSwga3dhbnR5bGVbM10sXG4gICAgICAgICAgICAgICAgICAgIGRvbWluYW50YSwgb2RjaHlsZW5pZS5wcnplY2lldG5lLm1lZGlhbmEsXG4gICAgICAgICAgICAgICAgICAgIG9kY2h5bGVuaWUucHJ6ZWNpZXRuZS5zcmVkbmlhLCB3YXJpYW5jamEsIG9kY2h5bGVuaWUuc3RhbmRhcmRvd2UsXG4gICAgICAgICAgICAgICAgICAgIHdzcG9sY3p5bm5pay56bWllbm5vY2ksIG9kY2h5bGVuaWUuY3dpYXJ0a293ZSwgcm96c3RlcCxcbiAgICAgICAgICAgICAgICAgICAgd3Nwb2xjenlubmlrLmFzeW1ldHJpaSwgd3NrYXpuaWsuYXN5bWV0cmlpLCB3c3BvbGN6eW5uaWsuc3BsYXN6Y3plbmlhLFxuICAgICAgICAgICAgICAgICAgICBtb21lbnR5WzJdLCBtb21lbnR5WzNdLCBtb21lbnR5WzRdLFxuICAgICAgICAgICAgICAgICAgICBtb21lbnR5LmNlbnRyYWxuZVsyXSwgbW9tZW50eS5jZW50cmFsbmVbM10sIG1vbWVudHkuY2VudHJhbG5lWzRdLFxuICAgICAgICAgICAgICAgICAgICBtb21lbnR5LmNlbnRyYWxuZS5hYnNvbHV0bmVbMl0sIG1vbWVudHkuY2VudHJhbG5lLmFic29sdXRuZVszXSxcbiAgICAgICAgICAgICAgICAgICAgbW9tZW50eS5jZW50cmFsbmUuYWJzb2x1dG5lWzRdXG4gICAgICAgICAgKVxuICApXG59Il19 -->
+<pre class="r"><code>mean.harmonic &lt;- function (series) {
+  return(length(series) / sum(1 / series))
+}
+
+
+mean.geometric &lt;- function (series) {
+  return(prod(series) ^ (1 / length(series)))
+}
+
+
+mode.stat &lt;- function (series) {
+  ux &lt;- unique(series)
+  tab &lt;- tabulate(match(series, ux))
+  return(ux[tab == max(tab)])
+}
+
+
+average.deviation &lt;- function (series, from_value) {
+  return(sum(abs(series - from_value)) / length(series))
+}
+
+
+coefficient.of.variation &lt;- function (series) {
+  return(sd(series) / mean(series))
+}
+
+
+quantile.deviation &lt;- function (series) {
+  return((quantile(series, 0.75) - quantile(series, 0.25)) / 2)
+}
+
+
+asymmetry.coefficient &lt;- function (series) {
+  return(all.moments(series, central = TRUE, absolute = FALSE, order.max = 3)[4] / (sd(series) ^ 3))
+}
+
+
+describe &lt;- function (series) {
+  srednia.arytmetyczna &lt;- mean(series)
+  srednia.harmoniczna &lt;- mean.harmonic(series)
+  srednia.geometryczna &lt;- mean.geometric(series)
+  kwantyle &lt;- quantile(series, c(0.25, 0.5, 0.75))
+  dominanta &lt;- mean(mode.stat(series))
+  odchylenie.przecietne.mediana &lt;- average.deviation(series, mean(series))
+  odchylenie.przecietne.srednia &lt;- average.deviation(series, median(series))
+  wariancja &lt;- var(series)
+  odchylenie.standardowe &lt;- sd(series)
+  wspolczynnik.zmiennoci &lt;- coefficient.of.variation(series)
+  odchylenie.cwiartkowe &lt;- quantile.deviation(series)
+  rozstep &lt;- diff(range(series))
+  wspolczynnik.asymetrii &lt;- skewness(series)
+  wskaznik.asymetrii &lt;- asymmetry.coefficient(series)
+  wspolczynnik.splaszczenia &lt;- kurtosis(series)
+  momenty &lt;- all.moments(series, central = FALSE, absolute = FALSE, order.max = 4)
+  momenty.centralne &lt;- all.moments(series, central = TRUE, absolute = FALSE, order.max = 4)
+  momenty.centralne.absolutne &lt;- all.moments(series, central = TRUE, absolute = TRUE, order.max = 4)
+  data.frame(
+          Statystyka=c(&quot;Średnia arytmetyczna&quot;, &quot;Średnia harmoniczna&quot;, &quot;Średnia geometryczna&quot;,
+                       &quot;Kwantyl rzędu 1/4&quot;, &quot;Kwantyl rzędu 2/4 (mediana)&quot;, &quot;Kwartyl rzędu 3/4&quot;,
+                       &quot;Dominanta&quot;, &quot;Odchylenie przeciętne od mediany&quot;,
+                       &quot;Odchylenie przeciętne od średniej&quot;, &quot;Wariancja&quot;, &quot;Odchylenie standardowe&quot;,
+                       &quot;Współczynnik zmienności&quot;, &quot;Odchylenie ćwiartkowe&quot;, &quot;Rozstęp&quot;,
+                       &quot;Współczynnik asymetrii&quot;, &quot;Wskaźnik asymetrii&quot;, &quot;Współczynnik spłaszczenia&quot;,
+                       &quot;Moment zwykły 1 rzędu&quot;, &quot;Moment zwykły 2 rzędu&quot;, &quot;Moment zwykły 3 rzędu&quot;,
+                       &quot;Moment centralny 1 rzędu&quot;, &quot;Moment centralny 2 rzędu&quot;, &quot;Moment centralny 3 rzędu&quot;,
+                       &quot;Moment centralny absolutny 1 rzędu&quot;, &quot;Moment centralny absolutny 2 rzędu&quot;,
+                       &quot;Moment centralny absolutny 3 rzędu&quot;
+          ),
+          Wartosc=c(srednia.arytmetyczna, srednia.harmoniczna, srednia.geometryczna,
+                    kwantyle[1], kwantyle[2], kwantyle[3],
+                    dominanta, odchylenie.przecietne.mediana,
+                    odchylenie.przecietne.srednia, wariancja, odchylenie.standardowe,
+                    wspolczynnik.zmiennoci, odchylenie.cwiartkowe, rozstep,
+                    wspolczynnik.asymetrii, wskaznik.asymetrii, wspolczynnik.splaszczenia,
+                    momenty[2], momenty[3], momenty[4],
+                    momenty.centralne[2], momenty.centralne[3], momenty.centralne[4],
+                    momenty.centralne.absolutne[2], momenty.centralne.absolutne[3],
+                    momenty.centralne.absolutne[4]
+          )
+  )
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiZGVzY3JpYmUoZGYkZykifQ== -->
+<pre class="r"><code>describe(df$g)</code></pre>
+<!-- rnb-source-end -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Statystyka"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Wartosc"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"Średnia arytmetyczna","2":"2.063158e+01"},{"1":"Średnia harmoniczna","2":"2.041821e+01"},{"1":"Średnia geometryczna","2":"Inf"},{"1":"Kwantyl rzędu 1/4","2":"1.896524e+01"},{"1":"Kwantyl rzędu 2/4 (mediana)","2":"2.109993e+01"},{"1":"Kwartyl rzędu 3/4","2":"2.212378e+01"},{"1":"Dominanta","2":"2.511438e+01"},{"1":"Odchylenie przeciętne od mediany","2":"1.693420e+00"},{"1":"Odchylenie przeciętne od średniej","2":"1.654573e+00"},{"1":"Wariancja","2":"4.150934e+00"},{"1":"Odchylenie standardowe","2":"2.037384e+00"},{"1":"Współczynnik zmienności","2":"9.875074e-02"},{"1":"Odchylenie ćwiartkowe","2":"1.579268e+00"},{"1":"Rozstęp","2":"2.110404e+01"},{"1":"Współczynnik asymetrii","2":"-4.280308e-01"},{"1":"Wskaźnik asymetrii","2":"-4.280244e-01"},{"1":"Współczynnik spłaszczenia","2":"2.629237e+00"},{"1":"Moment zwykły 1 rzędu","2":"2.063158e+01"},{"1":"Moment zwykły 2 rzędu","2":"4.298131e+02"},{"1":"Moment zwykły 3 rzędu","2":"9.035384e+03"},{"1":"Moment centralny 1 rzędu","2":"-2.106603e-16"},{"1":"Moment centralny 2 rzędu","2":"4.150892e+00"},{"1":"Moment centralny 3 rzędu","2":"-3.619822e+00"},{"1":"Moment centralny absolutny 1 rzędu","2":"1.693420e+00"},{"1":"Moment centralny absolutny 2 rzędu","2":"4.150892e+00"},{"1":"Moment centralny absolutny 3 rzędu","2":"1.262674e+01"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-chunk-end -->
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlN0YXIgY2xhc3NpZmljYXRpb24iDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmxpYnJhcnkoZHBseXIpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkobW9tZW50cykNCmBgYA0KDQpgYGB7cn0NCmZ1bGxfZGYgPC0gcmVhZC5jc3YoInN0YXItY2xhc3NpZmljdGFpb24tZGF0YS5jc3YiKQ0KZGYgPC0gZnVsbF9kZlstNzk1NDQsICFuYW1lcyhmdWxsX2RmKSAlaW4lDQogICAgICAgIGMoInJlcnVuX0lEIiwgInJ1bl9JRCIsICJjYW1fY29sIiwgImZpZWxkX0lEIiwgInNwZWNfb2JqX0lEIiwgInBsYXRlIiwgIk1KRCIsICJmaWJlcl9JRCIpXQ0Kc3VtbWFyeShkZikNCmBgYA0KYGBge3J9DQpjb3IoZGYkZywgZGYkcikNCg0KYGBgDQpgYGB7cn0NCm1lYW4uaGFybW9uaWMgPC0gZnVuY3Rpb24gKHNlcmllcykgew0KICByZXR1cm4obGVuZ3RoKHNlcmllcykgLyBzdW0oMSAvIHNlcmllcykpDQp9DQoNCg0KbWVhbi5nZW9tZXRyaWMgPC0gZnVuY3Rpb24gKHNlcmllcykgew0KICByZXR1cm4ocHJvZChzZXJpZXMpIF4gKDEgLyBsZW5ndGgoc2VyaWVzKSkpDQp9DQoNCg0KbW9kZS5zdGF0IDwtIGZ1bmN0aW9uIChzZXJpZXMpIHsNCiAgdXggPC0gdW5pcXVlKHNlcmllcykNCiAgdGFiIDwtIHRhYnVsYXRlKG1hdGNoKHNlcmllcywgdXgpKQ0KICByZXR1cm4odXhbdGFiID09IG1heCh0YWIpXSkNCn0NCg0KDQphdmVyYWdlLmRldmlhdGlvbiA8LSBmdW5jdGlvbiAoc2VyaWVzLCBmcm9tX3ZhbHVlKSB7DQogIHJldHVybihzdW0oYWJzKHNlcmllcyAtIGZyb21fdmFsdWUpKSAvIGxlbmd0aChzZXJpZXMpKQ0KfQ0KDQoNCmNvZWZmaWNpZW50Lm9mLnZhcmlhdGlvbiA8LSBmdW5jdGlvbiAoc2VyaWVzKSB7DQogIHJldHVybihzZChzZXJpZXMpIC8gbWVhbihzZXJpZXMpKQ0KfQ0KDQoNCnF1YW50aWxlLmRldmlhdGlvbiA8LSBmdW5jdGlvbiAoc2VyaWVzKSB7DQogIHJldHVybigocXVhbnRpbGUoc2VyaWVzLCAwLjc1KSAtIHF1YW50aWxlKHNlcmllcywgMC4yNSkpIC8gMikNCn0NCg0KDQphc3ltbWV0cnkuY29lZmZpY2llbnQgPC0gZnVuY3Rpb24gKHNlcmllcykgew0KICByZXR1cm4oYWxsLm1vbWVudHMoc2VyaWVzLCBjZW50cmFsID0gVFJVRSwgYWJzb2x1dGUgPSBGQUxTRSwgb3JkZXIubWF4ID0gMylbNF0gLyAoc2Qoc2VyaWVzKSBeIDMpKQ0KfQ0KDQoNCmRlc2NyaWJlIDwtIGZ1bmN0aW9uIChzZXJpZXMpIHsNCiAgc3JlZG5pYS5hcnl0bWV0eWN6bmEgPC0gbWVhbihzZXJpZXMpDQogIHNyZWRuaWEuaGFybW9uaWN6bmEgPC0gbWVhbi5oYXJtb25pYyhzZXJpZXMpDQogIHNyZWRuaWEuZ2VvbWV0cnljem5hIDwtIG1lYW4uZ2VvbWV0cmljKHNlcmllcykNCiAga3dhbnR5bGUgPC0gcXVhbnRpbGUoc2VyaWVzLCBjKDAuMjUsIDAuNSwgMC43NSkpDQogIGRvbWluYW50YSA8LSBtZWFuKG1vZGUuc3RhdChzZXJpZXMpKQ0KICBvZGNoeWxlbmllLnByemVjaWV0bmUubWVkaWFuYSA8LSBhdmVyYWdlLmRldmlhdGlvbihzZXJpZXMsIG1lYW4oc2VyaWVzKSkNCiAgb2RjaHlsZW5pZS5wcnplY2lldG5lLnNyZWRuaWEgPC0gYXZlcmFnZS5kZXZpYXRpb24oc2VyaWVzLCBtZWRpYW4oc2VyaWVzKSkNCiAgd2FyaWFuY2phIDwtIHZhcihzZXJpZXMpDQogIG9kY2h5bGVuaWUuc3RhbmRhcmRvd2UgPC0gc2Qoc2VyaWVzKQ0KICB3c3BvbGN6eW5uaWsuem1pZW5ub2NpIDwtIGNvZWZmaWNpZW50Lm9mLnZhcmlhdGlvbihzZXJpZXMpDQogIG9kY2h5bGVuaWUuY3dpYXJ0a293ZSA8LSBxdWFudGlsZS5kZXZpYXRpb24oc2VyaWVzKQ0KICByb3pzdGVwIDwtIGRpZmYocmFuZ2Uoc2VyaWVzKSkNCiAgd3Nwb2xjenlubmlrLmFzeW1ldHJpaSA8LSBza2V3bmVzcyhzZXJpZXMpDQogIHdza2F6bmlrLmFzeW1ldHJpaSA8LSBhc3ltbWV0cnkuY29lZmZpY2llbnQoc2VyaWVzKQ0KICB3c3BvbGN6eW5uaWsuc3BsYXN6Y3plbmlhIDwtIGt1cnRvc2lzKHNlcmllcykNCiAgbW9tZW50eSA8LSBhbGwubW9tZW50cyhzZXJpZXMsIGNlbnRyYWwgPSBGQUxTRSwgYWJzb2x1dGUgPSBGQUxTRSwgb3JkZXIubWF4ID0gNCkNCiAgbW9tZW50eS5jZW50cmFsbmUgPC0gYWxsLm1vbWVudHMoc2VyaWVzLCBjZW50cmFsID0gVFJVRSwgYWJzb2x1dGUgPSBGQUxTRSwgb3JkZXIubWF4ID0gNCkNCiAgbW9tZW50eS5jZW50cmFsbmUuYWJzb2x1dG5lIDwtIGFsbC5tb21lbnRzKHNlcmllcywgY2VudHJhbCA9IFRSVUUsIGFic29sdXRlID0gVFJVRSwgb3JkZXIubWF4ID0gNCkNCiAgZGF0YS5mcmFtZSgNCiAgICAgICAgICBTdGF0eXN0eWthPWMoIsWacmVkbmlhIGFyeXRtZXR5Y3puYSIsICLFmnJlZG5pYSBoYXJtb25pY3puYSIsICLFmnJlZG5pYSBnZW9tZXRyeWN6bmEiLA0KICAgICAgICAgICAgICAgICAgICAgICAiS3dhbnR5bCByesSZZHUgMS80IiwgIkt3YW50eWwgcnrEmWR1IDIvNCAobWVkaWFuYSkiLCAiS3dhcnR5bCByesSZZHUgMy80IiwNCiAgICAgICAgICAgICAgICAgICAgICAgIkRvbWluYW50YSIsICJPZGNoeWxlbmllIHByemVjacSZdG5lIG9kIG1lZGlhbnkiLA0KICAgICAgICAgICAgICAgICAgICAgICAiT2RjaHlsZW5pZSBwcnplY2nEmXRuZSBvZCDFm3JlZG5pZWoiLCAiV2FyaWFuY2phIiwgIk9kY2h5bGVuaWUgc3RhbmRhcmRvd2UiLA0KICAgICAgICAgICAgICAgICAgICAgICAiV3Nww7PFgmN6eW5uaWsgem1pZW5ub8WbY2kiLCAiT2RjaHlsZW5pZSDEh3dpYXJ0a293ZSIsICJSb3pzdMSZcCIsDQogICAgICAgICAgICAgICAgICAgICAgICJXc3DDs8WCY3p5bm5payBhc3ltZXRyaWkiLCAiV3NrYcW6bmlrIGFzeW1ldHJpaSIsICJXc3DDs8WCY3p5bm5payBzcMWCYXN6Y3plbmlhIiwNCiAgICAgICAgICAgICAgICAgICAgICAgIk1vbWVudCB6d3lrxYJ5IDEgcnrEmWR1IiwgIk1vbWVudCB6d3lrxYJ5IDIgcnrEmWR1IiwgIk1vbWVudCB6d3lrxYJ5IDMgcnrEmWR1IiwNCiAgICAgICAgICAgICAgICAgICAgICAgIk1vbWVudCBjZW50cmFsbnkgMSByesSZZHUiLCAiTW9tZW50IGNlbnRyYWxueSAyIHJ6xJlkdSIsICJNb21lbnQgY2VudHJhbG55IDMgcnrEmWR1IiwNCiAgICAgICAgICAgICAgICAgICAgICAgIk1vbWVudCBjZW50cmFsbnkgYWJzb2x1dG55IDEgcnrEmWR1IiwgIk1vbWVudCBjZW50cmFsbnkgYWJzb2x1dG55IDIgcnrEmWR1IiwNCiAgICAgICAgICAgICAgICAgICAgICAgIk1vbWVudCBjZW50cmFsbnkgYWJzb2x1dG55IDMgcnrEmWR1Ig0KICAgICAgICAgICksDQogICAgICAgICAgV2FydG9zYz1jKHNyZWRuaWEuYXJ5dG1ldHljem5hLCBzcmVkbmlhLmhhcm1vbmljem5hLCBzcmVkbmlhLmdlb21ldHJ5Y3puYSwNCiAgICAgICAgICAgICAgICAgICAga3dhbnR5bGVbMV0sIGt3YW50eWxlWzJdLCBrd2FudHlsZVszXSwNCiAgICAgICAgICAgICAgICAgICAgZG9taW5hbnRhLCBvZGNoeWxlbmllLnByemVjaWV0bmUubWVkaWFuYSwNCiAgICAgICAgICAgICAgICAgICAgb2RjaHlsZW5pZS5wcnplY2lldG5lLnNyZWRuaWEsIHdhcmlhbmNqYSwgb2RjaHlsZW5pZS5zdGFuZGFyZG93ZSwNCiAgICAgICAgICAgICAgICAgICAgd3Nwb2xjenlubmlrLnptaWVubm9jaSwgb2RjaHlsZW5pZS5jd2lhcnRrb3dlLCByb3pzdGVwLA0KICAgICAgICAgICAgICAgICAgICB3c3BvbGN6eW5uaWsuYXN5bWV0cmlpLCB3c2them5pay5hc3ltZXRyaWksIHdzcG9sY3p5bm5pay5zcGxhc3pjemVuaWEsDQogICAgICAgICAgICAgICAgICAgIG1vbWVudHlbMl0sIG1vbWVudHlbM10sIG1vbWVudHlbNF0sDQogICAgICAgICAgICAgICAgICAgIG1vbWVudHkuY2VudHJhbG5lWzJdLCBtb21lbnR5LmNlbnRyYWxuZVszXSwgbW9tZW50eS5jZW50cmFsbmVbNF0sDQogICAgICAgICAgICAgICAgICAgIG1vbWVudHkuY2VudHJhbG5lLmFic29sdXRuZVsyXSwgbW9tZW50eS5jZW50cmFsbmUuYWJzb2x1dG5lWzNdLA0KICAgICAgICAgICAgICAgICAgICBtb21lbnR5LmNlbnRyYWxuZS5hYnNvbHV0bmVbNF0NCiAgICAgICAgICApDQogICkNCn0NCmBgYA0KDQoNCmBgYHtyfQ0KZGVzY3JpYmUoZGYkZykNCmBgYA0K</div>
 
 
 

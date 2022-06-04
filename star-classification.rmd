@@ -3,4 +3,107 @@ title: "Star classification"
 output: html_notebook
 ---
 
+```{r}
+library(dplyr)
+library(tidyverse)
+library(moments)
+```
 
+```{r}
+full_df <- read.csv("star-classifictaion-data.csv")
+df <- full_df[-79544, !names(full_df) %in%
+        c("rerun_ID", "run_ID", "cam_col", "field_ID", "spec_obj_ID", "plate", "MJD", "fiber_ID")]
+summary(df)
+```
+```{r}
+cor(df$g, df$r)
+
+```
+```{r}
+mean.harmonic <- function (series) {
+  return(length(series) / sum(1 / series))
+}
+
+
+mean.geometric <- function (series) {
+  return(prod(series) ^ (1 / length(series)))
+}
+
+
+mode.stat <- function (series) {
+  ux <- unique(series)
+  tab <- tabulate(match(series, ux))
+  return(ux[tab == max(tab)])
+}
+
+
+average.deviation <- function (series, from_value) {
+  return(sum(abs(series - from_value)) / length(series))
+}
+
+
+coefficient.of.variation <- function (series) {
+  return(sd(series) / mean(series))
+}
+
+
+quantile.deviation <- function (series) {
+  return((quantile(series, 0.75) - quantile(series, 0.25)) / 2)
+}
+
+
+asymmetry.coefficient <- function (series) {
+  return(all.moments(series, central = TRUE, absolute = FALSE, order.max = 3)[4] / (sd(series) ^ 3))
+}
+
+
+describe <- function (series) {
+  srednia.arytmetyczna <- mean(series)
+  srednia.harmoniczna <- mean.harmonic(series)
+  srednia.geometryczna <- mean.geometric(series)
+  kwantyle <- quantile(series, c(0.25, 0.5, 0.75))
+  dominanta <- mean(mode.stat(series))
+  odchylenie.przecietne.mediana <- average.deviation(series, mean(series))
+  odchylenie.przecietne.srednia <- average.deviation(series, median(series))
+  wariancja <- var(series)
+  odchylenie.standardowe <- sd(series)
+  wspolczynnik.zmiennoci <- coefficient.of.variation(series)
+  odchylenie.cwiartkowe <- quantile.deviation(series)
+  rozstep <- diff(range(series))
+  wspolczynnik.asymetrii <- skewness(series)
+  wskaznik.asymetrii <- asymmetry.coefficient(series)
+  wspolczynnik.splaszczenia <- kurtosis(series)
+  momenty <- all.moments(series, central = FALSE, absolute = FALSE, order.max = 4)
+  momenty.centralne <- all.moments(series, central = TRUE, absolute = FALSE, order.max = 4)
+  momenty.centralne.absolutne <- all.moments(series, central = TRUE, absolute = TRUE, order.max = 4)
+  data.frame(
+          Statystyka=c("Średnia arytmetyczna", "Średnia harmoniczna", "Średnia geometryczna",
+                       "Kwantyl rzędu 1/4", "Kwantyl rzędu 2/4 (mediana)", "Kwartyl rzędu 3/4",
+                       "Dominanta", "Odchylenie przeciętne od mediany",
+                       "Odchylenie przeciętne od średniej", "Wariancja", "Odchylenie standardowe",
+                       "Współczynnik zmienności", "Odchylenie ćwiartkowe", "Rozstęp",
+                       "Współczynnik asymetrii", "Wskaźnik asymetrii", "Współczynnik spłaszczenia",
+                       "Moment zwykły 1 rzędu", "Moment zwykły 2 rzędu", "Moment zwykły 3 rzędu",
+                       "Moment centralny 1 rzędu", "Moment centralny 2 rzędu", "Moment centralny 3 rzędu",
+                       "Moment centralny absolutny 1 rzędu", "Moment centralny absolutny 2 rzędu",
+                       "Moment centralny absolutny 3 rzędu"
+          ),
+          Wartosc=c(srednia.arytmetyczna, srednia.harmoniczna, srednia.geometryczna,
+                    kwantyle[1], kwantyle[2], kwantyle[3],
+                    dominanta, odchylenie.przecietne.mediana,
+                    odchylenie.przecietne.srednia, wariancja, odchylenie.standardowe,
+                    wspolczynnik.zmiennoci, odchylenie.cwiartkowe, rozstep,
+                    wspolczynnik.asymetrii, wskaznik.asymetrii, wspolczynnik.splaszczenia,
+                    momenty[2], momenty[3], momenty[4],
+                    momenty.centralne[2], momenty.centralne[3], momenty.centralne[4],
+                    momenty.centralne.absolutne[2], momenty.centralne.absolutne[3],
+                    momenty.centralne.absolutne[4]
+          )
+  )
+}
+```
+
+
+```{r}
+describe(df$g)
+```
