@@ -3,19 +3,20 @@ title: "Star classification"
 output: html_notebook
 ---
 
-```{r import-libraries, echo = FALSE, results = FALSE, message = FALSE, warning = FALSE}
+```{r import-libraries, echo = TRUE, results = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(moments)
 library(ggridges)
 library(viridis)
 library(hrbrthemes)
+library(GGally)
 ```
 
 ```{r load-database}
 full_df <- read.csv("star-classifictaion-data.csv")
 df <- full_df[-79544, !names(full_df) %in%
-        c("rerun_ID", "run_ID", "cam_col", "field_ID", "spec_obj_ID", "plate", "MJD", "fiber_ID")]
-df$class <- as.factor(df$class)
+  c("rerun_ID", "run_ID", "cam_col", "field_ID", "spec_obj_ID", "plate", "MJD", "fiber_ID")]
+df$class <- factor(df$class, labels = c("Galaxy", "Quasar", "Star"))
 summary(df)
 ```
 
@@ -24,44 +25,44 @@ cor(df$g, df$r)
 ```
 
 ```{r statistic-functions}
-mean.harmonic <- function (series) {
+mean.harmonic <- function(series) {
   return(length(series) / sum(1 / series))
 }
 
 
-mean.geometric <- function (series) {
-  return(prod(series) ^ (1 / length(series)))
+mean.geometric <- function(series) {
+  return(prod(series)^(1 / length(series)))
 }
 
 
-mode.stat <- function (series) {
+mode.stat <- function(series) {
   ux <- unique(series)
   tab <- tabulate(match(series, ux))
   return(ux[tab == max(tab)])
 }
 
 
-average.deviation <- function (series, from_value) {
+average.deviation <- function(series, from_value) {
   return(sum(abs(series - from_value)) / length(series))
 }
 
 
-coefficient.of.variation <- function (series) {
+coefficient.of.variation <- function(series) {
   return(sd(series) / mean(series))
 }
 
 
-quantile.deviation <- function (series) {
+quantile.deviation <- function(series) {
   return((quantile(series, 0.75) - quantile(series, 0.25)) / 2)
 }
 
 
-asymmetry.coefficient <- function (series) {
-  return(all.moments(series, central = TRUE, absolute = FALSE, order.max = 3)[4] / (sd(series) ^ 3))
+asymmetry.coefficient <- function(series) {
+  return(all.moments(series, central = TRUE, absolute = FALSE, order.max = 3)[4] / (sd(series)^3))
 }
 
 
-describe <- function (series) {
+describe <- function(series) {
   srednia.arytmetyczna <- mean(series)
   srednia.harmoniczna <- mean.harmonic(series)
   srednia.geometryczna <- mean.geometric(series)
@@ -81,28 +82,28 @@ describe <- function (series) {
   momenty.centralne <- all.moments(series, central = TRUE, absolute = FALSE, order.max = 4)
   momenty.centralne.absolutne <- all.moments(series, central = TRUE, absolute = TRUE, order.max = 4)
   data.frame(
-          Statystyka=c("Średnia arytmetyczna", "Średnia harmoniczna", "Średnia geometryczna",
-                       "Kwantyl rzędu 1/4", "Kwantyl rzędu 2/4 (mediana)", "Kwartyl rzędu 3/4",
-                       "Dominanta", "Odchylenie przeciętne od mediany",
-                       "Odchylenie przeciętne od średniej", "Wariancja", "Odchylenie standardowe",
-                       "Współczynnik zmienności", "Odchylenie ćwiartkowe", "Rozstęp",
-                       "Współczynnik asymetrii", "Wskaźnik asymetrii", "Współczynnik spłaszczenia",
-                       "Moment zwykły 1 rzędu", "Moment zwykły 2 rzędu", "Moment zwykły 3 rzędu",
-                       "Moment centralny 1 rzędu", "Moment centralny 2 rzędu", "Moment centralny 3 rzędu",
-                       "Moment centralny absolutny 1 rzędu", "Moment centralny absolutny 2 rzędu",
-                       "Moment centralny absolutny 3 rzędu"
-          ),
-          Wartosc=c(srednia.arytmetyczna, srednia.harmoniczna, srednia.geometryczna,
-                    kwantyle[1], kwantyle[2], kwantyle[3],
-                    dominanta, odchylenie.przecietne.mediana,
-                    odchylenie.przecietne.srednia, wariancja, odchylenie.standardowe,
-                    wspolczynnik.zmiennoci, odchylenie.cwiartkowe, rozstep,
-                    wspolczynnik.asymetrii, wskaznik.asymetrii, wspolczynnik.splaszczenia,
-                    momenty[2], momenty[3], momenty[4],
-                    momenty.centralne[2], momenty.centralne[3], momenty.centralne[4],
-                    momenty.centralne.absolutne[2], momenty.centralne.absolutne[3],
-                    momenty.centralne.absolutne[4]
-          )
+    Statystyka = c("Średnia arytmetyczna", "Średnia harmoniczna", "Średnia geometryczna",
+                   "Kwantyl rzędu 1/4", "Kwantyl rzędu 2/4 (mediana)", "Kwartyl rzędu 3/4",
+                   "Dominanta", "Odchylenie przeciętne od mediany",
+                   "Odchylenie przeciętne od średniej", "Wariancja", "Odchylenie standardowe",
+                   "Współczynnik zmienności", "Odchylenie ćwiartkowe", "Rozstęp",
+                   "Współczynnik asymetrii", "Wskaźnik asymetrii", "Współczynnik spłaszczenia",
+                   "Moment zwykły 1 rzędu", "Moment zwykły 2 rzędu", "Moment zwykły 3 rzędu",
+                   "Moment centralny 1 rzędu", "Moment centralny 2 rzędu", "Moment centralny 3 rzędu",
+                   "Moment centralny absolutny 1 rzędu", "Moment centralny absolutny 2 rzędu",
+                   "Moment centralny absolutny 3 rzędu"
+    ),
+    Wartosc = c(srednia.arytmetyczna, srednia.harmoniczna, srednia.geometryczna,
+                kwantyle[1], kwantyle[2], kwantyle[3],
+                dominanta, odchylenie.przecietne.mediana,
+                odchylenie.przecietne.srednia, wariancja, odchylenie.standardowe,
+                wspolczynnik.zmiennoci, odchylenie.cwiartkowe, rozstep,
+                wspolczynnik.asymetrii, wskaznik.asymetrii, wspolczynnik.splaszczenia,
+                momenty[2], momenty[3], momenty[4],
+                momenty.centralne[2], momenty.centralne[3], momenty.centralne[4],
+                momenty.centralne.absolutne[2], momenty.centralne.absolutne[3],
+                momenty.centralne.absolutne[4]
+    )
   )
 }
 ```
@@ -112,9 +113,9 @@ describe(df$g)
 ```
 
 ```{r prepare-data-for-ridges}
-df.wavelengths <- data.frame(Intensity=double(),
-                             Class=factor(),
-                             Color=factor())
+df.wavelengths <- data.frame(Intensity = double(),
+                             Class = factor(),
+                             Color = factor())
 
 colnames_vec <- list(c("u", "g", "r", "i", "z"), c("Ultraviolet", "Green", "Red", "Near Infrared", "Infrared"))
 for (i in seq_along(colnames_vec[[1]])) {
@@ -123,45 +124,89 @@ for (i in seq_along(colnames_vec[[1]])) {
   colnames(df.temp) <- c("Intensity", "Class", "Wavelength")
   df.wavelengths <- rbind(df.wavelengths, df.temp)
 }
-df.wavelengths.galaxy <- subset(df.wavelengths, Class=="GALAXY")
-head(df.wavelengths.galaxy)
+df[, "mean"] <- apply(df[, c("u", "g", "r", "i", "z")], 1, mean)
+head(subset(df.wavelengths, Class == "Galaxy"))
 ```
 
-```{r plot-galaxy-intensity, message = FALSE, results = FALSE, warning = FALSE}
-ggplot(subset(df.wavelengths, Class=="GALAXY"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
+```{r plot-galaxy-ridges-density, message = FALSE, results = FALSE, warning = FALSE}
+ggplot(subset(df.wavelengths, Class == "Galaxy"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.005) +
   scale_fill_viridis(name = "Intensity", option = "C") +
   labs(title = 'Galaxy wavelength intensity per color') +
   theme_ipsum() +
-    theme(
-      legend.position="none",
-      panel.spacing = unit(0.1, "lines"),
-      strip.text.x = element_text(size = 10)
-    )
+  theme(
+    legend.position = "none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10)
+  )
 ```
 
-```{r}
-ggplot(subset(df.wavelengths, Class=="STAR"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
+```{r plot-star-ridges-density, message = FALSE, results = FALSE, warning = FALSE}
+ggplot(subset(df.wavelengths, Class == "Star"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.005) +
   scale_fill_viridis(name = "Intensity", option = "C") +
   labs(title = 'Star wavelength intensity per color') +
   theme_ipsum() +
-    theme(
-      legend.position="none",
-      panel.spacing = unit(0.1, "lines"),
-      strip.text.x = element_text(size = 10)
-    )
+  theme(
+    legend.position = "none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10)
+  )
 ```
 
-```{r}
-ggplot(subset(df.wavelengths, Class=="QSO"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
+```{r plot-quasar-ridges-density, message = FALSE, results = FALSE, warning = FALSE}
+ggplot(subset(df.wavelengths, Class == "Quasar"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.005) +
   scale_fill_viridis(name = "Intensity", option = "C") +
   labs(title = 'Quasar wavelength intensity per color') +
   theme_ipsum() +
-    theme(
-      legend.position="none",
-      panel.spacing = unit(0.1, "lines"),
-      strip.text.x = element_text(size = 10)
-    )
+  theme(
+    legend.position = "none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10)
+  )
+```
+
+```{r, message = FALSE, results = FALSE, warning = FALSE}
+ggcorr(df[c("alpha", "delta", "u", "g", "r", "i", "z", "redshift")], method = c("everything", "pearson"), label = TRUE)
+```
+
+```{r, message = FALSE, results = FALSE, warning = FALSE}
+ggpairs(df[c("u", "g", "r", "i", "z")],
+        upper = list(continuous = wrap("density", alpha = 0.75)),
+        diag = list(continuous = wrap("densityDiag")),
+        lower = "blank",
+        title = "Title",
+        columnLabels = c("Ultraviolet", "Green", "Red", "Near Infrared", "Infrared"),
+        proportions = "auto"
+)
+```
+
+```{r scatter-alpha-delta, message = FALSE, results = FALSE, warning = FALSE}
+ggplot(df, aes(x = `alpha`, y = `delta`)) +
+  geom_point(cex = 2, col = "#69b3a2") +
+  labs(title= "Title", x = "Alpha", y = "Delta") +
+  theme_ipsum()
+```
+
+```{r z-i-regression, message = FALSE, results = FALSE, warning = FALSE}
+ggplot(df, aes(x = `z`, y = `i`)) +
+  geom_point() +
+  geom_smooth(method = "gam", color = "cyan", fill = "#69b3a2", se = TRUE, level = 0.99) +
+  labs(title= "Title", x = "Infrared", y = "Near Infrared") +
+  theme_ipsum()
+```
+
+```{r mean-violin-plots, message = FALSE, results = FALSE, warning = FALSE}
+ggplot(df, aes(x = `class`, y = `mean`, fill = `class`)) +
+  geom_violin() +
+  geom_boxplot(width = 0.13, color = "black", fill = "grey", alpha = 1) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11)
+  ) +
+  labs(title = "A Violin wrapping a boxplot", x = "", y = "Average star intensity")
+
 ```
