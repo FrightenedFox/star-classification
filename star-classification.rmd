@@ -1,9 +1,95 @@
 ---
-title: "Star classification"
+title: "**Star classification**"
+author: "***Vitalii Morskyi*** -- 166731 | P4 | 2FS-DI"
+date: "06 czerwca 2022"
 output: html_notebook
 ---
 
-```{r import-libraries, echo = TRUE, results = FALSE, message = FALSE, warning = FALSE}
+***
+
+# Opis wybranych danych do analizy
+
+Wybrany został zbiór danych dla widmowej klasyfikacji gwiazd,
+który jest wynikiem badania Sloan Digital Sky Survey Data Release 17.
+Zawiera on dane potrzebne dla klasyfikacji gwiazd, galaktyk i [kwazarów](https://en.wikipedia.org/wiki/Quasar).
+Ułatwiona postać zestawu danych została zamieszczona na stronie
+[Kaggle](https://www.kaggle.com/datasets/fedesoriano/stellar-classification-dataset-sdss17),
+natomiast oryginał można pobrać na stronie [SDSS](https://dr17.sdss.org/optical/spectrum/view/data/access).
+Opis wyników badania można znaleźć na stronie [SDSS](https://www.sdss.org/science/).
+
+W astronomii widmowa klasyfikacja gwiazd to klasyfikacja na podstawie ich charakterystyk spektralnych.
+Schemat klasyfikacji galaktyk, kwazarów i gwiazd jest jednym z najbardziej fundamentalnych w astronomii.
+Skatalogowanie gwiazd i ich rozmieszczenie na niebie doprowadziło do zrozumienia,
+że tworzą one naszą własną galaktykę a, gdy zrozumieliśmy, że Andromeda jest odrębną galaktyką od naszej,
+zaczeliśmy badać inne galaktyki i budować potężniejsze teleskopy.
+
+![Mapa SDSS Wszechświata. Każda kropka to galaktyka; kolor pokazuje gęstość lokalną ([źródło](https://www.sdss.org/science/)).](https://www.sdss.org/wp-content/uploads/2014/06/orangepie.jpg)
+
+### Opis poszzcególnych kolumn
+
+Zestaw danych zawiera 100 000 wierszy, w każdym 17 cech,
+które opisują jedną galaktykę, gwiazdę lub kwazar, a mianowicie:
+
+- `obj_ID` -- Identyfikator obiektu, unikalna wartość, która identyfikuje obiekt w katalogu obrazów używanym przez CAS.
+- `alpha` -- Kąt rektascensji (w epoce J2000).
+- `delta` -- Kąt deklinacji (w epoce J2000).
+- `u` -- Intensywność promieniowania widma ultrafioletowego.
+- `g` -- Intensywność promieniowania widma zielonego.
+- `r` -- Intensywność promieniowania widma czerwonego.
+- `i` -- Intensywność promieniowania widma bliskiej podczerwieni.
+- `z` -- Intensywność promieniowania widma podczerwieni.
+- `run_ID` -- Numer przebiegu używany do identyfikacji konkretnego skanu.
+- `rerun_ID` -- Numer ponownego przebiegu dla określenia sposobu przetwarzania obrazu.
+- `cam_col` -- Kolumna kamery do identyfikacji linii skanowania w przebiegu.
+- `field_ID` -- Numer identyfikacyjny pola.
+- `spec_obj_ID` -- Unikalny identyfikator używany dla optycznych obiektów spektroskopowych
+(oznacza to, że 2 różne obserwacje o tym samym `spec_obj_ID` muszą dzielić klasę wyjściową).
+- `class` -- Klasa obiektu (galaktyka, gwiazda lub kwazar).
+- `rershift` -- Wartość przesunięcia ku czerwieni na podstawie wzrostu długości fali.
+- `plate` -- Numer identyfikacyjny płyty, identyfikuje każdą płytkę w SDSS.
+- `MJD` -- Zmodyfikowana data juliańska, używana do wskazania, kiedy dany fragment danych SDSS został pobrany.
+- `fiber_ID` -- Numer identyfikacyjny włókna, które skierowało światło na płaszczyznę ogniskowania.
+
+
+![Porównanie obecnych standardowych filtrów INT WFC z zestawem SDSS ([źródło](https://people.ast.cam.ac.uk/~rgm/wfcsur/int_survey_filters.html)).](https://people.ast.cam.ac.uk/~rgm/wfcsur/int_wfc_sdss_filters.gif)
+
+### Wczytywanie i filtracja danych
+
+Wczytujemy ramkę danych z pliku CSV (Comma Separated Values), używając funkcji `read.csv`.
+Używając indeksowania ramki danych, usuwamy stąd zbędne dla analizy kolumny oraz 79544 wiersz, w którym danę są zepsute.
+Funkcja `colnames` wypisuje listę nagłówków ramki danych.
+W kolumnie `class` zmieniamy typ danych z `character` na `factor`, co ułatwi w przyszłości interakcję z ramką danych.
+
+```{r load-database, eval = TRUE}
+full_df <- read.csv("star-classifictaion-data.csv")
+df <- full_df[-79544, !colnames(full_df) %in%
+  c("obj_ID", "rerun_ID", "run_ID", "cam_col", "field_ID", "spec_obj_ID", "plate", "MJD", "fiber_ID")]
+df$class <- factor(df$class, labels = c("Galaxy", "Quasar", "Star"))
+head(df)
+```
+
+Aby lepiej zrozumieć, z jakimi danymi mamy do czynienia,
+wypisujemy podsumowanie ramki danych za pomocą polecenia `summary`.
+
+```{r df-summary, eval = FALSE}
+summary(df)
+```
+
+Dla podalszej analizy zestawu danych wczytujemy następujące paczki:
+
+- `tidyverse` -- Ugruntowany zbiór pakietów R zaprojektowanych do analizy danych.
+W jego zestaw wchodzą takie paczki, jak:
+- `ggplot2` -- system do deklaratywnego tworzenia grafiki, oparty na *"The Grammar of Graphics"*;
+- `dplyr` -- zapewnia gramatykę manipulacji danymi, zapewniając spójny zestaw poleceń,
+które rozwiązują najczęstsze problemy związane z manipulacją danymi;
+- Inne, niewykorzystane w tym projekcie.
+- `moments` -- Zapewnia funkcje do wyliczenia momentów, kumulacji, skośności, kurtozy i powiązanych testów.
+- `ggridges` -- Zapewnia funkcji do rysowania grzbietowych wykresów gęnstości.
+- `viridis` -- Dostarcza serię układów kolorów.
+- `hrbrthemes` -- Kompilacja dodatkowych motywów, skal i narzędzi `ggplot2`.
+- `GGally` -- Rozszerzenie do `ggplot2`.
+
+```{r import-libraries, echo = TRUE, results = FALSE, message = FALSE, warning = FALSE, eval = TRUE}
 library(tidyverse)
 library(moments)
 library(ggridges)
@@ -12,56 +98,99 @@ library(hrbrthemes)
 library(GGally)
 ```
 
-```{r load-database}
-full_df <- read.csv("star-classifictaion-data.csv")
-df <- full_df[-79544, !names(full_df) %in%
-  c("rerun_ID", "run_ID", "cam_col", "field_ID", "spec_obj_ID", "plate", "MJD", "fiber_ID")]
-df$class <- factor(df$class, labels = c("Galaxy", "Quasar", "Star"))
-summary(df)
+Przed rozpoczęciem analizy spójrzmy na rozkład gwiazd, galaktyk i kwazarów w zestawie danych.
+W tym celu używamy funkcji `group_by` dla rozdzielenia ramki danych według odpowiednich obiektów,
+liczymy liczbę elementów każdego obiektu za pomocą funkcji `count`
+i rysujemy wykres kołowy używając funkcji `geom_bar` w połączeniu z fukcją `coord_polar` z pakietu `ggplot2`.
+Pierwsza tworzy ułożony w stos wykres słupkowy z pojedynczym słupkiem,
+a druga -- zmienia typ współrzędnych na biegunowe, tym samym przekształcając wykres w kołowy.
+
+Dla ulepszenia wyglądu wykresu używamy dużej liczby funkcji z pakietu `ggplot2`,
+takich jak `labs` -- zamiana nagłówków i `theme_ipsum` -- ustawienie motywu kolorystycznego wykresu.
+W kodzie używamy również operatoru `%>%` z pakietu `magittr`, który pozwala tworzyć pipline w języku R.
+Pakiet `magittr` nie był wczytywany jawnie, ponieważ jest on domyślnie wymagany przez pakiet `dplyr`.
+
+```{r classes, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+df %>%
+  group_by(class) %>%
+  count() %>%
+  ggplot(aes(x = "", y = n, fill = class)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  labs(title = "Pie Chart of the class distribution", fill = "Class") +
+  theme_void()
 ```
 
-```{r correlation}
-cor(df$g, df$r)
-```
+# Wyznaczenie podstawowych parametrów opisowych
 
-```{r statistic-functions}
+Postanowiono obliczyć następujące parametry:
+
+- **Średnia arytmetyczna, harmoniczna i geometryczna**
+- **Kwantyle** rzędu $\frac{1}{4}$, $\frac{2}{4}$ (mediana) i $\frac{3}{4}$
+- **Dominanta**
+- **Wariancja i odchylenie standardowe**
+- **Odchylenie przeciętne** (od mediany i od średniej) -- miara zmienności próby,
+  która jest bardziej odporna na wartości odstające w zestawie danych niż odchylenie standardowe.
+  Co więcej odchylenie przeciętne od mediany, działa lepiej niż standardowe odchylenie
+  z rozkładami bez średniej lub wariancji, takimi jak rozkład Cauchy'ego.
+- **Współczynnik zmienności** -- miara zmienności próby, która jest niezależna od jednostki pomiaru,
+  więc jest liczbą bezwymiarową. Pozwala to na porównania zbiorów danych z różnymi jednostkami pomiarowymi
+  lub bardzo różnymi średnimi. Z innej strony, gdy średnia wartość jest bliska zeru,
+  współczynnik zmienności zbliża się do nieskończoności i dlatego jest wrażliwy na małe wartości średniej.
+- **Rozstęp**
+- **Odchylenie ćwiartkowe**
+- **Współczynnik asymetrii**
+- **Wskaźnik asymetrii**
+- **Współczynnik spłaszczenia**
+- **Moment zwykły 1 rzędu**
+- **Moment zwykły 2 rzędu**
+- **Moment zwykły 3 rzędu**
+- **Moment centralny 1 rzędu**
+- **Moment centralny 2 rzędu**
+- **Moment centralny 3 rzędu**
+- **Moment centralny absolutny 1 rzędu**
+- **Moment centralny absolutny 2 rzędu**
+- **Moment centralny absolutny 3 rzędu**
+
+```{r statistic-functions, eval = FALSE}
+#' Calculate harmonic mean
 mean.harmonic <- function(series) {
   return(length(series) / sum(1 / series))
 }
 
-
+#' Calculate geometric mean
 mean.geometric <- function(series) {
   return(prod(series)^(1 / length(series)))
 }
 
-
+#' Calculate mode (dominant value)
 mode.stat <- function(series) {
   ux <- unique(series)
   tab <- tabulate(match(series, ux))
   return(ux[tab == max(tab)])
 }
 
-
+#' Calculate absolute average deviation from other value
 average.deviation <- function(series, from_value) {
   return(sum(abs(series - from_value)) / length(series))
 }
 
-
+#' Calculate coefficient of variation
 coefficient.of.variation <- function(series) {
   return(sd(series) / mean(series))
 }
 
-
+#' Calculate quantile deviation
 quantile.deviation <- function(series) {
   return((quantile(series, 0.75) - quantile(series, 0.25)) / 2)
 }
 
-
+#' Calculate asymmetry coefficient
 asymmetry.coefficient <- function(series) {
   return(all.moments(series, central = TRUE, absolute = FALSE, order.max = 3)[4] / (sd(series)^3))
 }
 
-
+#' Calculate a lot of parameters of the series
 describe <- function(series) {
   srednia.arytmetyczna <- mean(series)
   srednia.harmoniczna <- mean.harmonic(series)
@@ -106,13 +235,11 @@ describe <- function(series) {
     )
   )
 }
-```
 
-```{r print-statistics}
 describe(df$g)
 ```
 
-```{r prepare-data-for-ridges}
+```{r prepare-data-for-ridges, eval = FALSE}
 df.wavelengths <- data.frame(Intensity = double(),
                              Class = factor(),
                              Color = factor())
@@ -124,13 +251,13 @@ for (i in seq_along(colnames_vec[[1]])) {
   colnames(df.temp) <- c("Intensity", "Class", "Wavelength")
   df.wavelengths <- rbind(df.wavelengths, df.temp)
 }
-df[, "mean"] <- apply(df[, c("u", "g", "r", "i", "z")], 1, mean)
+df[, "avg-total"] <- apply(df[, c("u", "g", "r", "i", "z")], 1, mean)
 head(subset(df.wavelengths, Class == "Galaxy"))
 ```
 
-```{r plot-galaxy-ridges-density, message = FALSE, results = FALSE, warning = FALSE}
+```{r plot-galaxy-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(subset(df.wavelengths, Class == "Galaxy"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
-  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.005) +
+  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
   scale_fill_viridis(name = "Intensity", option = "C") +
   labs(title = 'Galaxy wavelength intensity per color') +
   theme_ipsum() +
@@ -141,9 +268,9 @@ ggplot(subset(df.wavelengths, Class == "Galaxy"), aes(x = `Intensity`, y = `Wave
   )
 ```
 
-```{r plot-star-ridges-density, message = FALSE, results = FALSE, warning = FALSE}
+```{r plot-star-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(subset(df.wavelengths, Class == "Star"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
-  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.005) +
+  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
   scale_fill_viridis(name = "Intensity", option = "C") +
   labs(title = 'Star wavelength intensity per color') +
   theme_ipsum() +
@@ -154,9 +281,9 @@ ggplot(subset(df.wavelengths, Class == "Star"), aes(x = `Intensity`, y = `Wavele
   )
 ```
 
-```{r plot-quasar-ridges-density, message = FALSE, results = FALSE, warning = FALSE}
+```{r plot-quasar-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(subset(df.wavelengths, Class == "Quasar"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
-  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.005) +
+  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
   scale_fill_viridis(name = "Intensity", option = "C") +
   labs(title = 'Quasar wavelength intensity per color') +
   theme_ipsum() +
@@ -167,11 +294,11 @@ ggplot(subset(df.wavelengths, Class == "Quasar"), aes(x = `Intensity`, y = `Wave
   )
 ```
 
-```{r, message = FALSE, results = FALSE, warning = FALSE}
+```{r, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggcorr(df[c("alpha", "delta", "u", "g", "r", "i", "z", "redshift")], method = c("everything", "pearson"), label = TRUE)
 ```
 
-```{r, message = FALSE, results = FALSE, warning = FALSE}
+```{r, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggpairs(df[c("u", "g", "r", "i", "z")],
         upper = list(continuous = wrap("density", alpha = 0.75)),
         diag = list(continuous = wrap("densityDiag")),
@@ -182,23 +309,23 @@ ggpairs(df[c("u", "g", "r", "i", "z")],
 )
 ```
 
-```{r scatter-alpha-delta, message = FALSE, results = FALSE, warning = FALSE}
+```{r scatter-alpha-delta, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(df, aes(x = `alpha`, y = `delta`)) +
-  geom_point(cex = 2, col = "#69b3a2") +
-  labs(title= "Title", x = "Alpha", y = "Delta") +
+  geom_point(cex = 2, col = "#69b3a2", size = 0.5) +
+  labs(title = "Title", x = "Alpha", y = "Delta") +
   theme_ipsum()
 ```
 
-```{r z-i-regression, message = FALSE, results = FALSE, warning = FALSE}
+```{r z-i-regression, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(df, aes(x = `z`, y = `i`)) +
   geom_point() +
   geom_smooth(method = "gam", color = "cyan", fill = "#69b3a2", se = TRUE, level = 0.99) +
-  labs(title= "Title", x = "Infrared", y = "Near Infrared") +
+  labs(title = "Title", x = "Infrared", y = "Near Infrared") +
   theme_ipsum()
 ```
 
-```{r mean-violin-plots, message = FALSE, results = FALSE, warning = FALSE}
-ggplot(df, aes(x = `class`, y = `mean`, fill = `class`)) +
+```{r avg-total-violin-plots, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+ggplot(df, aes(x = `class`, y = `avg-total`, fill = `class`)) +
   geom_violin() +
   geom_boxplot(width = 0.13, color = "black", fill = "grey", alpha = 1) +
   scale_fill_viridis(discrete = TRUE) +
@@ -209,4 +336,116 @@ ggplot(df, aes(x = `class`, y = `mean`, fill = `class`)) +
   ) +
   labs(title = "A Violin wrapping a boxplot", x = "", y = "Average star intensity")
 
+```
+
+```{r redshift-distribution, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+ggplot(df, aes(x = `redshift`, y = `class`, fill = ..x..)) +
+  geom_density_ridges_gradient(scale = 2, rel_min_height = 1e-5) +
+  scale_fill_viridis(name = "Intensity", option = "C") +
+  labs(title = 'Redshift distribution per object', x = "Redshift", y = "Object") +
+  theme_ipsum() +
+  theme(
+    legend.position = "none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10)
+  )
+```
+
+```{r redshift-empirical-cumulative-distribution, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+ggplot(df, aes(x = `redshift`, colour = `class`)) +
+  stat_ecdf() +
+  theme_ipsum() +
+  labs(title = "Redshift empirical cumulative distribution per object", x = "Redshift", y = "Empirical cumulative distribution")
+```
+
+```{r t-test-avg-total, eval = FALSE}
+t.test(df[df$class == "Quasar", "avg-total"],
+       df[df$class == "Galaxy", "avg-total"],
+       conf.level = 1 - 0.005,
+       alternative = "greater",
+       mu = 0
+)
+```
+
+```{r, eval = FALSE}
+x <- df[df$class == "Star", "z"]
+x <- (x - mean(x)) / sd(x)
+# szp.n <- ceiling(sqrt(length(x)))
+szp.n <- ceiling(log(length(x)))
+szp.h <- diff(range(x)) / szp.n
+szp <- data.frame(id = 1:szp.n,
+                  start = 0:(szp.n - 1) * szp.h + min(x),
+                  stop = 1:szp.n * szp.h + min(x))
+szp$stop[szp.n] <- szp$stop[szp.n] + szp.h / 10   # to count all the elements
+szp[, "mid"] <- apply(szp[, c("start", "stop")], 1, mean)
+szp[, "count"] <- apply(szp, 1, function(szp.row) sum(x >= szp.row["start"] & x < szp.row["stop"]))
+szp[, "cum.count"] <- cumsum(szp$count)
+szp[, "frequency"] <- szp$count / length(x)
+szp[, "cum.frequency"] <- cumsum(szp$frequency)
+szp[, "theo.frequency"] <- dnorm(szp$mid)
+szp[, "theo.count"] <- szp$theo.frequency * length(x)
+szp[, "theo.cum.frequency"] <- cumsum(szp$theo.frequency)
+szp[, "theo.cum.count"] <- cumsum(szp$theo.count)
+round(szp, 2)
+```
+
+```{r, eval = FALSE}
+chisq.test(szp$count, p = szp$theo.count, rescale.p = TRUE)
+sum(((szp$count - szp$theo.count)^2) / szp$theo.count)
+```
+
+```{r norm-and-frequences, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+x_temp_points <- seq(szp$start[1], szp$stop[szp.n], length.out = 100)
+df_norm_dist_plot <- data.frame(xs = x_temp_points, ys = dnorm(x_temp_points))
+ggplot(szp, aes(x = mid, y = frequency)) +
+  geom_line(data = df_norm_dist_plot, aes(x = xs, y = ys), color = "blue") +
+  geom_line(color = "grey") +
+  geom_point(shape = 21, color = "black", fill = "#69b3a2", size = 3) +
+  theme_ipsum() +
+  ggtitle("Title")
+```
+
+```{r, eval = FALSE}
+y.n.samples <- 250
+y.sample.size <- 20
+y <- df[df$class == "Quasar", "u"]
+sigma0 <- sd(y)
+y.sample.V.stats <- c()
+for (i in 1:y.n.samples) {
+  y.sample <- sample(y, y.sample.size)
+  y.sample.V.stats[i] <- y.sample.size * var(y.sample) / sigma0^2
+}
+df_y_samples <- data.frame(xs = 1:y.n.samples, ys = y.sample.V.stats)
+k80 <- c(qchisq(0.2 / 2, y.sample.size - 1), qchisq(1 - 0.2 / 2, y.sample.size - 1))
+k90 <- c(qchisq(0.1 / 2, y.sample.size - 1), qchisq(1 - 0.1 / 2, y.sample.size - 1))
+k99 <- c(qchisq(0.01 / 2, y.sample.size - 1), qchisq(1 - 0.01 / 2, y.sample.size - 1))
+k999 <- c(qchisq(0.001 / 2, y.sample.size - 1), qchisq(1 - 0.001 / 2, y.sample.size - 1))
+df_var_test <- data.frame(a = c("80.0%", "90.0%", "99.0%", "99.9%"),
+                          b = paste0(c(
+                            sum(k80[1] <= df_y_samples$ys & df_y_samples$ys <= k80[2]) / y.n.samples * 100,
+                            sum(k90[1] <= df_y_samples$ys & df_y_samples$ys <= k90[2]) / y.n.samples * 100,
+                            sum(k99[1] <= df_y_samples$ys & df_y_samples$ys <= k90[2]) / y.n.samples * 100,
+                            sum(k999[1] <= df_y_samples$ys & df_y_samples$ys <= k999[2]) / y.n.samples * 100
+                          ), "%"))
+colnames(df_var_test) <- c("Przedzial", "Ile trafilo?")
+df_var_test
+```
+
+```{r, eval = FALSE}
+ggplot(df_y_samples, aes(x = xs, y = ys)) +
+  geom_line(color = "black") +
+  geom_hline(yintercept = k80, linetype = "dashed", color = "red") +
+  geom_hline(yintercept = k90, linetype = "dashed", color = "green") +
+  geom_hline(yintercept = k99, linetype = "dashed", color = "cyan") +
+  geom_hline(yintercept = k999, linetype = "dashed", color = "purple") +
+  geom_ribbon(aes(ymin = k999[1], ymax = k99[1]), fill = "purple", alpha = 0.2) +
+  geom_ribbon(aes(ymin = k99[1], ymax = k90[1]), fill = "cyan", alpha = 0.2) +
+  geom_ribbon(aes(ymin = k90[1], ymax = k80[1]), fill = "green", alpha = 0.2) +
+  geom_ribbon(aes(ymin = k80[1], ymax = k80[2]), fill = "red", alpha = 0.2) +
+  geom_ribbon(aes(ymin = k80[2], ymax = k90[2]), fill = "green", alpha = 0.2) +
+  geom_ribbon(aes(ymin = k90[2], ymax = k99[2]), fill = "cyan", alpha = 0.2) +
+  geom_ribbon(aes(ymin = k90[2], ymax = k99[2]), fill = "cyan", alpha = 0.2) +
+  geom_ribbon(aes(ymin = k99[2], ymax = k999[2]), fill = "purple", alpha = 0.2) +
+  theme_ipsum() +
+  ggtitle("Title")
 ```
