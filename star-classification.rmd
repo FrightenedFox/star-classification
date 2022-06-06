@@ -130,27 +130,22 @@ Postanowiono obliczyć następujące parametry:
 - **Dominanta**
 - **Wariancja i odchylenie standardowe**
 - **Odchylenie przeciętne** (od mediany i od średniej) -- miara zmienności próby,
-  która jest bardziej odporna na wartości odstające w zestawie danych niż odchylenie standardowe.
-  Co więcej odchylenie przeciętne od mediany, działa lepiej niż standardowe odchylenie
-  z rozkładami bez średniej lub wariancji, takimi jak rozkład Cauchy'ego.
+która jest bardziej odporna na wartości odstające w zestawie danych niż odchylenie standardowe.
+Co więcej odchylenie przeciętne od mediany, działa lepiej niż standardowe odchylenie
+z rozkładami bez średniej lub wariancji, takimi jak rozkład Cauchy'ego.
 - **Współczynnik zmienności** -- miara zmienności próby, która jest niezależna od jednostki pomiaru,
-  więc jest liczbą bezwymiarową. Pozwala to na porównania zbiorów danych z różnymi jednostkami pomiarowymi
-  lub bardzo różnymi średnimi. Z innej strony, gdy średnia wartość jest bliska zeru,
-  współczynnik zmienności zbliża się do nieskończoności i dlatego jest wrażliwy na małe wartości średniej.
+więc jest liczbą bezwymiarową. Pozwala to na porównania zbiorów danych z różnymi jednostkami pomiarowymi
+lub bardzo różnymi średnimi. Z innej strony, gdy średnia wartość jest bliska zeru,
+współczynnik zmienności zbliża się do nieskończoności i dlatego jest wrażliwy na małe wartości średniej.
 - **Rozstęp**
 - **Odchylenie ćwiartkowe**
-- **Współczynnik asymetrii**
-- **Wskaźnik asymetrii**
+- **Współczynnik i wskaźnik asymetrii** -- miara asymetrii rozkładu,
+która określa w którą stronę rozkład jest bardziej "nachylony".
 - **Współczynnik spłaszczenia**
-- **Moment zwykły 1 rzędu**
-- **Moment zwykły 2 rzędu**
-- **Moment zwykły 3 rzędu**
-- **Moment centralny 1 rzędu**
-- **Moment centralny 2 rzędu**
-- **Moment centralny 3 rzędu**
-- **Moment centralny absolutny 1 rzędu**
-- **Moment centralny absolutny 2 rzędu**
-- **Moment centralny absolutny 3 rzędu**
+- **Moment zwykły 1 i 2 rzędu** -- 1 rzędu = średnia.
+- **Moment centralny 1, 2, 3 i 4 rzędu** -- 2 rzędzu = wariancja, 3 = współczynnik asymetrii $\times\ \sigma^3$ ,
+4 = współczynnik spłaszczania  $\times\ \sigma^4$.
+- **Moment centralny absolutny 1 i 2 rzędu**
 
 ```{r statistic-functions, eval = FALSE}
 #' Calculate harmonic mean
@@ -207,9 +202,9 @@ describe <- function(series) {
   wspolczynnik.asymetrii <- skewness(series)
   wskaznik.asymetrii <- asymmetry.coefficient(series)
   wspolczynnik.splaszczenia <- kurtosis(series)
-  momenty <- all.moments(series, central = FALSE, absolute = FALSE, order.max = 4)
-  momenty.centralne <- all.moments(series, central = TRUE, absolute = FALSE, order.max = 4)
-  momenty.centralne.absolutne <- all.moments(series, central = TRUE, absolute = TRUE, order.max = 4)
+  momenty <- all.moments(series, central = FALSE, absolute = FALSE, order.max = 3)
+  momenty.centralne <- all.moments(series, central = TRUE, absolute = FALSE, order.max = 5)
+  momenty.centralne.absolutne <- all.moments(series, central = TRUE, absolute = TRUE, order.max = 3)
   data.frame(
     Statystyka = c("Średnia arytmetyczna", "Średnia harmoniczna", "Średnia geometryczna",
                    "Kwantyl rzędu 1/4", "Kwantyl rzędu 2/4 (mediana)", "Kwartyl rzędu 3/4",
@@ -217,10 +212,10 @@ describe <- function(series) {
                    "Odchylenie przeciętne od średniej", "Wariancja", "Odchylenie standardowe",
                    "Współczynnik zmienności", "Odchylenie ćwiartkowe", "Rozstęp",
                    "Współczynnik asymetrii", "Wskaźnik asymetrii", "Współczynnik spłaszczenia",
-                   "Moment zwykły 1 rzędu", "Moment zwykły 2 rzędu", "Moment zwykły 3 rzędu",
+                   "Moment zwykły 1 rzędu", "Moment zwykły 2 rzędu",
                    "Moment centralny 1 rzędu", "Moment centralny 2 rzędu", "Moment centralny 3 rzędu",
-                   "Moment centralny absolutny 1 rzędu", "Moment centralny absolutny 2 rzędu",
-                   "Moment centralny absolutny 3 rzędu"
+                   "Moment centralny 4 rzędu",
+                   "Moment centralny absolutny 1 rzędu", "Moment centralny absolutny 2 rzędu"
     ),
     Wartosc = c(srednia.arytmetyczna, srednia.harmoniczna, srednia.geometryczna,
                 kwantyle[1], kwantyle[2], kwantyle[3],
@@ -228,15 +223,14 @@ describe <- function(series) {
                 odchylenie.przecietne.srednia, wariancja, odchylenie.standardowe,
                 wspolczynnik.zmiennoci, odchylenie.cwiartkowe, rozstep,
                 wspolczynnik.asymetrii, wskaznik.asymetrii, wspolczynnik.splaszczenia,
-                momenty[2], momenty[3], momenty[4],
-                momenty.centralne[2], momenty.centralne[3], momenty.centralne[4],
-                momenty.centralne.absolutne[2], momenty.centralne.absolutne[3],
-                momenty.centralne.absolutne[4]
+                momenty[2], momenty[3],
+                momenty.centralne[2], momenty.centralne[3], momenty.centralne[4], momenty.centralne[5],
+                momenty.centralne.absolutne[2], momenty.centralne.absolutne[3]
     )
   )
 }
 
-describe(df$g)
+describe(df[df$class == "Quasar", "u"])
 ```
 
 ```{r prepare-data-for-ridges, eval = FALSE}
@@ -258,7 +252,7 @@ head(subset(df.wavelengths, Class == "Galaxy"))
 ```{r plot-galaxy-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(subset(df.wavelengths, Class == "Galaxy"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
-  scale_fill_viridis(name = "Intensity", option = "C") +
+  scale_fill_viridis(name = "Intensity", option = "D") +
   labs(title = 'Galaxy wavelength intensity per color') +
   theme_ipsum() +
   theme(
@@ -271,7 +265,7 @@ ggplot(subset(df.wavelengths, Class == "Galaxy"), aes(x = `Intensity`, y = `Wave
 ```{r plot-star-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(subset(df.wavelengths, Class == "Star"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
-  scale_fill_viridis(name = "Intensity", option = "C") +
+  scale_fill_viridis(name = "Intensity", option = "D") +
   labs(title = 'Star wavelength intensity per color') +
   theme_ipsum() +
   theme(
@@ -284,7 +278,7 @@ ggplot(subset(df.wavelengths, Class == "Star"), aes(x = `Intensity`, y = `Wavele
 ```{r plot-quasar-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(subset(df.wavelengths, Class == "Quasar"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
-  scale_fill_viridis(name = "Intensity", option = "C") +
+  scale_fill_viridis(name = "Intensity", option = "D") +
   labs(title = 'Quasar wavelength intensity per color') +
   theme_ipsum() +
   theme(
@@ -311,8 +305,9 @@ ggpairs(df[c("u", "g", "r", "i", "z")],
 
 ```{r scatter-alpha-delta, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(df, aes(x = `alpha`, y = `delta`)) +
-  geom_point(cex = 2, col = "#69b3a2", size = 0.5) +
-  labs(title = "Title", x = "Alpha", y = "Delta") +
+  geom_point(col = "#69b3a2", size = 1) +
+  coord_polar("x", start = 11 * pi / 12, direction=-1) +
+  labs(title = "Title", x="", y="") +
   theme_ipsum()
 ```
 
