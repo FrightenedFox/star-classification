@@ -43,7 +43,7 @@ które opisują jedną galaktykę, gwiazdę lub kwazar, a mianowicie:
 - `cam_col` -- Kolumna kamery do identyfikacji linii skanowania w przebiegu.
 - `field_ID` -- Numer identyfikacyjny pola.
 - `spec_obj_ID` -- Unikalny identyfikator używany dla optycznych obiektów spektroskopowych
-(oznacza to, że 2 różne obserwacje o tym samym `spec_obj_ID` muszą dzielić klasę wyjściową).
+  (oznacza to, że 2 różne obserwacje o tym samym `spec_obj_ID` muszą dzielić klasę wyjściową).
 - `class` -- Klasa obiektu (galaktyka, gwiazda lub kwazar).
 - `rershift` -- Wartość przesunięcia ku czerwieni na podstawie wzrostu długości fali.
 - `plate` -- Numer identyfikacyjny płyty, identyfikuje każdą płytkę w SDSS.
@@ -79,10 +79,10 @@ Dla podalszej analizy zestawu danych wczytujemy następujące paczki:
 
 - `tidyverse` -- Ugruntowany zbiór pakietów R zaprojektowanych do analizy danych.
 W jego zestaw wchodzą takie paczki, jak:
-- `ggplot2` -- system do deklaratywnego tworzenia grafiki, oparty na *"The Grammar of Graphics"*;
-- `dplyr` -- zapewnia gramatykę manipulacji danymi, zapewniając spójny zestaw poleceń,
-które rozwiązują najczęstsze problemy związane z manipulacją danymi;
-- Inne, niewykorzystane w tym projekcie.
+  - `ggplot2` -- system do deklaratywnego tworzenia grafiki, oparty na *"The Grammar of Graphics"*;
+  - `dplyr` -- zapewnia gramatykę manipulacji danymi, zapewniając spójny zestaw poleceń,
+    które rozwiązują najczęstsze problemy związane z manipulacją danymi;
+  - Inne, niewykorzystane w tym projekcie.
 - `moments` -- Zapewnia funkcje do wyliczenia momentów, kumulacji, skośności, kurtozy i powiązanych testów.
 - `ggridges` -- Zapewnia funkcji do rysowania grzbietowych wykresów gęnstości.
 - `viridis` -- Dostarcza serię układów kolorów.
@@ -110,7 +110,7 @@ takich jak `labs` -- zamiana nagłówków i `theme_ipsum` -- ustawienie motywu k
 W kodzie używamy również operatoru `%>%` z pakietu `magittr`, który pozwala tworzyć pipline w języku R.
 Pakiet `magittr` nie był wczytywany jawnie, ponieważ jest on domyślnie wymagany przez pakiet `dplyr`.
 
-```{r classes, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+```{r classes, message = FALSE, results = FALSE, warning = FALSE, eval = TRUE}
 df %>%
   group_by(class) %>%
   count() %>%
@@ -130,24 +130,28 @@ Postanowiono obliczyć następujące parametry:
 - **Dominanta**
 - **Wariancja i odchylenie standardowe**
 - **Odchylenie przeciętne** (od mediany i od średniej) -- miara zmienności próby,
-która jest bardziej odporna na wartości odstające w zestawie danych niż odchylenie standardowe.
-Co więcej odchylenie przeciętne od mediany, działa lepiej niż standardowe odchylenie
-z rozkładami bez średniej lub wariancji, takimi jak rozkład Cauchy'ego.
+  która jest bardziej odporna na wartości odstające w zestawie danych niż odchylenie standardowe.
+  Co więcej odchylenie przeciętne od mediany, działa lepiej niż standardowe odchylenie
+  z rozkładami bez średniej lub wariancji, takimi jak rozkład Cauchy'ego.
 - **Współczynnik zmienności** -- miara zmienności próby, która jest niezależna od jednostki pomiaru,
-więc jest liczbą bezwymiarową. Pozwala to na porównania zbiorów danych z różnymi jednostkami pomiarowymi
-lub bardzo różnymi średnimi. Z innej strony, gdy średnia wartość jest bliska zeru,
-współczynnik zmienności zbliża się do nieskończoności i dlatego jest wrażliwy na małe wartości średniej.
+  więc jest liczbą bezwymiarową. Pozwala to na porównania zbiorów danych z różnymi jednostkami pomiarowymi
+  lub bardzo różnymi średnimi. Z innej strony, gdy średnia wartość jest bliska zeru,
+  współczynnik zmienności zbliża się do nieskończoności i dlatego jest wrażliwy na małe wartości średniej.
 - **Rozstęp**
 - **Odchylenie ćwiartkowe**
 - **Współczynnik i wskaźnik asymetrii** -- miara asymetrii rozkładu,
-która określa w którą stronę rozkład jest bardziej "nachylony".
+  która określa w którą stronę rozkład jest bardziej "nachylony".
 - **Współczynnik spłaszczenia**
 - **Moment zwykły 1 i 2 rzędu** -- 1 rzędu = średnia.
 - **Moment centralny 1, 2, 3 i 4 rzędu** -- 2 rzędzu = wariancja, 3 = współczynnik asymetrii $\times\ \sigma^3$ ,
-4 = współczynnik spłaszczania  $\times\ \sigma^4$.
+  4 = współczynnik spłaszczania  $\times\ \sigma^4$.
 - **Moment centralny absolutny 1 i 2 rzędu**
 
-```{r statistic-functions, eval = FALSE}
+Do obliczenia niektórych powyższych parametrów użyto już gotowych funkcji,
+takich jak `mean`, `sd`, `var`, `quantile`, `range`, `skewness`, `kurtosis` i `all.moments`
+(ostatnie 3 z pakietu `moments`). Inne parametry wyznaczono używając własnych funkcji.
+
+```{r statistic-functions, eval = TRUE}
 #' Calculate harmonic mean
 mean.harmonic <- function(series) {
   return(length(series) / sum(1 / series))
@@ -233,6 +237,31 @@ describe <- function(series) {
 describe(df[df$class == "Quasar", "u"])
 ```
 
+# Graficzna prezentacja danych
+
+W kolumnach `alpha`, `delta` podano współrzędne wszystkich obserwowanych obiektów w układzie równikowym równonocnym,
+a w kolumnie `redshift` -- względna odległość obiektu od Ziemi. Używając kolumn `alpha` i `redshift` możemy więc
+względnie pokazać jak rozłożone są analizowane obiekty w odniesieniu do Ziemi.
+Zauważmy, że na wykresie jest podana tylko 2D proekcja układu trójwymiarowego,
+więc jest to tylko i wyłącznie wykres pozorny.
+
+```{r scatter-alpha-delta, message = FALSE, results = FALSE, warning = FALSE, eval = TRUE}
+ggplot(df, aes(x = `alpha`, y = `redshift`)) +
+  geom_point(col = "#69b3a2", size = 0.5) +
+  coord_polar("x", start = 11 * pi / 12, direction=-1) +
+  labs(title = "Title", x="", y="Redshift (relative distance from the Earth)") +
+  theme_ipsum()
+```
+
+Przed rozpoczęciem jakiejkolwiek analizy, chcielibyśmy wiedzieć które kolumny są między sobą skorelowane.
+W tym celu rysujemy mapę ciepła korelacji Pearsona wszystkich badanych kolumn.
+Używamy w tym celu funkcji `ggcorr` z pakietu `GGally`.
+
+```{r, message = FALSE, results = FALSE, warning = FALSE, eval = TRUE}
+ggcorr(df[c("alpha", "delta", "u", "g", "r", "i", "z", "redshift")], method = c("everything", "pearson"), label = TRUE)
+```
+
+
 ```{r prepare-data-for-ridges, eval = FALSE}
 df.wavelengths <- data.frame(Intensity = double(),
                              Class = factor(),
@@ -248,6 +277,8 @@ for (i in seq_along(colnames_vec[[1]])) {
 df[, "avg-total"] <- apply(df[, c("u", "g", "r", "i", "z")], 1, mean)
 head(subset(df.wavelengths, Class == "Galaxy"))
 ```
+
+
 
 ```{r plot-galaxy-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(subset(df.wavelengths, Class == "Galaxy"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
@@ -288,9 +319,7 @@ ggplot(subset(df.wavelengths, Class == "Quasar"), aes(x = `Intensity`, y = `Wave
   )
 ```
 
-```{r, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
-ggcorr(df[c("alpha", "delta", "u", "g", "r", "i", "z", "redshift")], method = c("everything", "pearson"), label = TRUE)
-```
+
 
 ```{r, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggpairs(df[c("u", "g", "r", "i", "z")],
@@ -303,13 +332,7 @@ ggpairs(df[c("u", "g", "r", "i", "z")],
 )
 ```
 
-```{r scatter-alpha-delta, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
-ggplot(df, aes(x = `alpha`, y = `delta`)) +
-  geom_point(col = "#69b3a2", size = 1) +
-  coord_polar("x", start = 11 * pi / 12, direction=-1) +
-  labs(title = "Title", x="", y="") +
-  theme_ipsum()
-```
+
 
 ```{r z-i-regression, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
 ggplot(df, aes(x = `z`, y = `i`)) +
