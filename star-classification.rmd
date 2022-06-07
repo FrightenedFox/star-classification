@@ -60,7 +60,7 @@ Używając indeksowania ramki danych, usuwamy stąd zbędne dla analizy kolumny 
 Funkcja `colnames` wypisuje listę nagłówków ramki danych.
 W kolumnie `class` zmieniamy typ danych z `character` na `factor`, co ułatwi w przyszłości interakcję z ramką danych.
 
-```{r load-database, eval = TRUE}
+```{r load-database, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 full_df <- read.csv("star-classifictaion-data.csv")
 df <- full_df[-79544, !colnames(full_df) %in%
   c("obj_ID", "rerun_ID", "run_ID", "cam_col", "field_ID", "spec_obj_ID", "plate", "MJD", "fiber_ID")]
@@ -71,7 +71,7 @@ head(df)
 Aby lepiej zrozumieć, z jakimi danymi mamy do czynienia,
 wypisujemy podsumowanie ramki danych za pomocą polecenia `summary`.
 
-```{r df-summary, eval = FALSE}
+```{r df-summary, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 summary(df)
 ```
 
@@ -89,7 +89,7 @@ W jego zestaw wchodzą takie paczki, jak:
 - `hrbrthemes` -- Kompilacja dodatkowych motywów, skal i narzędzi `ggplot2`.
 - `GGally` -- Rozszerzenie do `ggplot2`.
 
-```{r import-libraries, echo = TRUE, results = FALSE, message = FALSE, warning = FALSE, eval = TRUE}
+```{r import-libraries, echo = TRUE, results = FALSE, message = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 library(tidyverse)
 library(moments)
 library(ggridges)
@@ -110,7 +110,9 @@ takich jak `labs` -- zamiana nagłówków i `theme_ipsum` -- ustawienie motywu k
 W kodzie używamy również operatoru `%>%` z pakietu `magittr`, który pozwala tworzyć pipline w języku R.
 Pakiet `magittr` nie był wczytywany jawnie, ponieważ jest on domyślnie wymagany przez pakiet `dplyr`.
 
-```{r classes, message = FALSE, results = FALSE, warning = FALSE, eval = TRUE}
+Z wykresu widzimy, że w zbiorze danych jest najwięcej galaktyk, dalej idą kwazary i gwiazdy.
+
+```{r classes, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 df %>%
   group_by(class) %>%
   count() %>%
@@ -151,7 +153,7 @@ Do obliczenia niektórych powyższych parametrów użyto już gotowych funkcji,
 takich jak `mean`, `sd`, `var`, `quantile`, `range`, `skewness`, `kurtosis` i `all.moments`
 (ostatnie 3 z pakietu `moments`). Inne parametry wyznaczono używając własnych funkcji.
 
-```{r statistic-functions, eval = TRUE}
+```{r statistic-functions, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 #' Calculate harmonic mean
 mean.harmonic <- function(series) {
   return(length(series) / sum(1 / series))
@@ -243,26 +245,75 @@ W kolumnach `alpha`, `delta` podano współrzędne wszystkich obserwowanych obie
 a w kolumnie `redshift` -- względna odległość obiektu od Ziemi. Używając kolumn `alpha` i `redshift` możemy więc
 względnie pokazać jak rozłożone są analizowane obiekty w odniesieniu do Ziemi.
 Zauważmy, że na wykresie jest podana tylko 2D proekcja układu trójwymiarowego,
-więc jest to tylko i wyłącznie wykres pozorny.
+więc jest to tylko i wyłącznie wykres pozorny. 
 
-```{r scatter-alpha-delta, message = FALSE, results = FALSE, warning = FALSE, eval = TRUE}
+Widzimy, że wykres zgadza się ze zdjęciem, które jest na oficjalnej stronie SDSS.
+
+```{r scatter-alpha-redshift, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 ggplot(df, aes(x = `alpha`, y = `redshift`)) +
   geom_point(col = "#69b3a2", size = 0.5) +
   coord_polar("x", start = 11 * pi / 12, direction=-1) +
-  labs(title = "Title", x="", y="Redshift (relative distance from the Earth)") +
+  labs(title = "Part of the SDSS map of the Universe", x="", y="Redshift (relative distance from the Earth)") +
   theme_ipsum()
 ```
 
 Przed rozpoczęciem jakiejkolwiek analizy, chcielibyśmy wiedzieć które kolumny są między sobą skorelowane.
 W tym celu rysujemy mapę ciepła korelacji Pearsona wszystkich badanych kolumn.
-Używamy w tym celu funkcji `ggcorr` z pakietu `GGally`.
+Oczekujemy zobaczyć dużą korelację pomiędzy intensywnością promieniowania różnych widm,
+natomiast korelacja pomiędzy innymi cechami zestawu danych nie powinna występować.
 
-```{r, message = FALSE, results = FALSE, warning = FALSE, eval = TRUE}
-ggcorr(df[c("alpha", "delta", "u", "g", "r", "i", "z", "redshift")], method = c("everything", "pearson"), label = TRUE)
+W celu narysowania wykresu używamy funkcji `ggcorr` z pakietu `GGally`. Jak widzimy, oczekiwania się sprawdziły.
+Dodatni znak współczynników korelacji pomiędzy wartościami `u`, `g`, `r`, `i`, `z` wskazuje na to,
+że występują wprost proporcjonalne zależności pomiędzy tymi wartościami.
+Widzimy również słabą korelację pomiędzy kolumnami `redshift` i `z`,
+ponieważ cecha `redshift` zależy od intensywności promieniowania widma podczerwieni.
+
+# TESTY ISTOTNOŚCI 
+
+```{r heatmap-pearson, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
+ggcorr(df[c("alpha", "delta", "u", "g", "r", "i", "z", "redshift")],
+       method = c("everything", "pearson"),
+       label = TRUE
+)
 ```
 
+Na następnym rysunku podano wykresy dwuwymiarowej gęstości rozkładu cech intensywności promieniowania różnych widm.
+Widzimy, że zależność jest wprost proporcjonalna, zgodnie z informacją,
+którą otrzymaliśmy licząc współczynnik korelacji.
 
-```{r prepare-data-for-ridges, eval = FALSE}
+```{r 2d-density-distribution, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
+ggpairs(df[c("u", "g", "r", "i", "z")],
+        upper = list(continuous = wrap("density", alpha = 0.75)),
+        diag = list(continuous = wrap("densityDiag")),
+        lower = "blank",
+        title = "2D density distribution of a random variable",
+        columnLabels = c("Ultraviolet", "Green", "Red", "Near Infrared", "Infrared"),
+        proportions = "auto"
+)
+```
+
+# OPIS METODY LM
+
+```{r z-i-regression, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
+ggplot(df, aes(x = `i`, y = `z`)) +
+  geom_point() +
+  geom_smooth(method = "lm", color = "cyan", fill = "#69b3a2", se = TRUE, level = 0.999) +
+  labs(title = "Simple empirical regression of a random variable Z against I",
+       x = "Near Infrared (I)",
+       y = "Infrared (Z)") +
+  theme_ipsum()
+```
+
+Narysujmy teraz gęstości intensywności promieniowania każdego widma osobno dla gwiazd,
+galaktyk i kwazarów. W tym celu przygotowujemy ramkę danych `df.wavelengths`, która będzie zawierała 3 cechy:
+- Klasę obiektu -- gwiazda, galaktyka lub kwazar;
+- Widmo promieniowania -- ultrafioletowe, zielone, czerwone, bliskiej podczerwieni, podczerwieni;
+- Intensywność promieniowania -- liczba.
+Chcielibyśmy również porównać całkowitą intensywność promieniowania każdej klasy obiektów,
+- więc tworzymy nową kolumnę `avg-total` w ramce `df`,
+- do której zamieszczamy średnie wartości intensywności promieniowania dla każdego badanego obiektu.
+
+```{r prepare-data-for-ridges, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 df.wavelengths <- data.frame(Intensity = double(),
                              Class = factor(),
                              Color = factor())
@@ -275,16 +326,20 @@ for (i in seq_along(colnames_vec[[1]])) {
   df.wavelengths <- rbind(df.wavelengths, df.temp)
 }
 df[, "avg-total"] <- apply(df[, c("u", "g", "r", "i", "z")], 1, mean)
-head(subset(df.wavelengths, Class == "Galaxy"))
+str(df.wavelengths)
 ```
 
+Używając wcześniej przygotowanej ramki `df.wavelengths` rysujemy wykres gęstości
+rozkładu intensywności promieniowania każdego widma galaktyk.
+Z otrzymanego wykresu możemy stwierdzić, że średnia obserwowana intensywność promieniowania zwiększa się razem
+ze zwiększeniem długości fali elektromagnetycznej.
+Tworząc analogiczne wykresy dla gwiazd i kwazarów, zauważamy podobną zależność.
 
-
-```{r plot-galaxy-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+```{r plot-galaxy-ridges-density, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 ggplot(subset(df.wavelengths, Class == "Galaxy"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
   scale_fill_viridis(name = "Intensity", option = "D") +
-  labs(title = 'Galaxy wavelength intensity per color') +
+  labs(title = 'Galaxy radiation intensity per specturm') +
   theme_ipsum() +
   theme(
     legend.position = "none",
@@ -293,11 +348,11 @@ ggplot(subset(df.wavelengths, Class == "Galaxy"), aes(x = `Intensity`, y = `Wave
   )
 ```
 
-```{r plot-star-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+```{r plot-star-ridges-density, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 ggplot(subset(df.wavelengths, Class == "Star"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
   scale_fill_viridis(name = "Intensity", option = "D") +
-  labs(title = 'Star wavelength intensity per color') +
+  labs(title = 'Star radiation intensity per specturm') +
   theme_ipsum() +
   theme(
     legend.position = "none",
@@ -306,11 +361,11 @@ ggplot(subset(df.wavelengths, Class == "Star"), aes(x = `Intensity`, y = `Wavele
   )
 ```
 
-```{r plot-quasar-ridges-density, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+```{r plot-quasar-ridges-density, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 ggplot(subset(df.wavelengths, Class == "Quasar"), aes(x = `Intensity`, y = `Wavelength`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001) +
   scale_fill_viridis(name = "Intensity", option = "D") +
-  labs(title = 'Quasar wavelength intensity per color') +
+  labs(title = 'Quasar radiation intensity per specturm') +
   theme_ipsum() +
   theme(
     legend.position = "none",
@@ -319,44 +374,50 @@ ggplot(subset(df.wavelengths, Class == "Quasar"), aes(x = `Intensity`, y = `Wave
   )
 ```
 
+Porównajmy teraz średnią intensywność promieniowania obiektów poszczególnych klas.
+W tym celu rysujemy wykres skrzypcowy łącznie z wykresem pudełkowym dla każdej klasy obiektów.
 
-
-```{r, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
-ggpairs(df[c("u", "g", "r", "i", "z")],
-        upper = list(continuous = wrap("density", alpha = 0.75)),
-        diag = list(continuous = wrap("densityDiag")),
-        lower = "blank",
-        title = "Title",
-        columnLabels = c("Ultraviolet", "Green", "Red", "Near Infrared", "Infrared"),
-        proportions = "auto"
-)
-```
-
-
-
-```{r z-i-regression, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
-ggplot(df, aes(x = `z`, y = `i`)) +
-  geom_point() +
-  geom_smooth(method = "gam", color = "cyan", fill = "#69b3a2", se = TRUE, level = 0.99) +
-  labs(title = "Title", x = "Infrared", y = "Near Infrared") +
-  theme_ipsum()
-```
-
-```{r avg-total-violin-plots, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+```{r avg-total-violin-plots, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 ggplot(df, aes(x = `class`, y = `avg-total`, fill = `class`)) +
   geom_violin() +
   geom_boxplot(width = 0.13, color = "black", fill = "grey", alpha = 1) +
   scale_fill_viridis(discrete = TRUE) +
+  labs(title = "Comparison of the object radiation distribution per class",
+       x = "",
+       y = "Average radiation intensity of the object") +
   theme_ipsum() +
   theme(
-    legend.position = "none",
-    plot.title = element_text(size = 11)
-  ) +
-  labs(title = "A Violin wrapping a boxplot", x = "", y = "Average star intensity")
-
+          legend.position = "none",
+  )
 ```
 
-```{r redshift-distribution, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+Z otrzymanego wykresu możemy stwierdzić, że średnie promieniowanie galaktyk i kwazarów jest podobne bliskie siebie,
+natomiast rozstęp ćwiartkowy dla klasy galaktyk jest bardziej przesunięty do dołu.
+Chcemy zatem sprawdzić hipotezę $H_0$, mówiącą, że średnie promieniowanie galaktyk i kwazarów jest równe.
+Hipotezę alternatywną $H_1$ określamy następująco:
+średnie promieniowanie kwazarów jest jednak większe od średniego promieniowania galaktyk.
+Przyjmujemy poziom istotności testu $\alpha=0.005$.
+
+Ponieważ wartość testowa $p < \alpha$, to należy odrzucić hipotezę $H_0$ na korzyść hipotezy $H_1$ mówiącej,
+że średnie promieniowanie kwazarów jest większe od średniego promieniowania galaktyk.
+
+```{r t-test-avg-total, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
+t.test(df[df$class == "Quasar", "avg-total"],
+       df[df$class == "Galaxy", "avg-total"],
+       conf.level = 1 - 0.005,
+       alternative = "greater",
+       mu = 0
+)
+```
+
+Narysujemy teraz wykres gęstości rozkładu cechy `redshift` dla każdej klasy badanych obiektów.
+Wiedząc, że cecha `redshift` odpowiada za odległość badanego obiektu od ziemi,
+z otrzymanego rysunku możemy stwierdzić, że w zestawie danych opisane tylko te gwiazdy,
+które znajdują się blisko ziemi. O wile więcej informacji mamy o bardziej oddalonych galaktykach i kwazarach.
+Prawdopodobnie zależność taka występuję z uwagi na rozmiar badanych obiektów:
+galaktyki i kwazary są czasami w miliardy razy większe od gwiazd i dlatego jest łatwiej ich zaobserwować.
+
+```{r redshift-distribution, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 ggplot(df, aes(x = `redshift`, y = `class`, fill = ..x..)) +
   geom_density_ridges_gradient(scale = 2, rel_min_height = 1e-5) +
   scale_fill_viridis(name = "Intensity", option = "C") +
@@ -369,23 +430,23 @@ ggplot(df, aes(x = `redshift`, y = `class`, fill = ..x..)) +
   )
 ```
 
-```{r redshift-empirical-cumulative-distribution, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+Na następnym rysunku podano wykres dystrybuanty empirycznej cechy `redshift` dla każdej klasy obiektów.  
+
+```{r redshift-empirical-cumulative-distribution, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=8, fig.height=4.5, eval = TRUE}
 ggplot(df, aes(x = `redshift`, colour = `class`)) +
   stat_ecdf() +
   theme_ipsum() +
   labs(title = "Redshift empirical cumulative distribution per object", x = "Redshift", y = "Empirical cumulative distribution")
 ```
 
-```{r t-test-avg-total, eval = FALSE}
-t.test(df[df$class == "Quasar", "avg-total"],
-       df[df$class == "Galaxy", "avg-total"],
-       conf.level = 1 - 0.005,
-       alternative = "greater",
-       mu = 0
-)
-```
+Chcielibyśmy teraz sprawdzić hipotezę $H_0$, że intensywność promieniowania widma podczerwieni gwiazd ma rozkład
+normalny $N(\overline{z},\ S(z))$. Alternatywną hipotezę $H_1$ określamy następująco:
+intensywność promieniowania widma podczerwieni nie przyjmuje rozkład normalny $N(\overline{z},\ S(z))$.
 
-```{r, eval = FALSE}
+Dla sprawdzenia hipotezy $H_0$ tworzymy szereg przedziałowy dla znormalizowanej cechy $\frac{Z-\overline{z}}{s_z}$.
+Do tabelki również dodajemy kolumnę z odpowiednymi teoretycznymi wartościami rozkładu normalnego.
+
+```{r szereg-rozdzielczy, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 x <- df[df$class == "Star", "z"]
 x <- (x - mean(x)) / sd(x)
 # szp.n <- ceiling(sqrt(length(x)))
@@ -407,12 +468,24 @@ szp[, "theo.cum.count"] <- cumsum(szp$theo.count)
 round(szp, 2)
 ```
 
-```{r, eval = FALSE}
-chisq.test(szp$count, p = szp$theo.count, rescale.p = TRUE)
-sum(((szp$count - szp$theo.count)^2) / szp$theo.count)
+Dla weryfikacji hipotezy $H_0$ wykorzystujemy test zgodności $\chi^2$.
+Przyjmujemy poziom istotności $\alpha=0.001$.
+
+Jak widzimy zmienna losowa $\chi^2$ należy do przedziału krytycznego $K$,
+więc należy odrzucić hipotezę $H_0$, mówiącą, że intensywność promieniowania widma podczerwieni gwiazd ma rozkład
+normalny $N(\overline{z},\ S(z))$.
+
+```{r, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
+# chisq.test(szp$count, p = szp$theo.count, rescale.p = TRUE)
+chisq <- sum(((szp$count - szp$theo.count)^2) / szp$theo.count)
+cat("Chisq =", chisq)
+cat("\nCritical interval K: [", qchisq(1 - 0.001, szp.n - 1), ", inf)", sep = "")
 ```
 
-```{r norm-and-frequences, message = FALSE, results = FALSE, warning = FALSE, eval = FALSE}
+Zobaczmy teraz jak wygląda gęstość rozkładu intensywności promieniowania widma podczerwieni gwiazd.
+Zauważamy istotne różnice w porównaniu do rozkładu normalnego.
+
+```{r norm-and-frequences, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=8, fig.height=6, eval = TRUE}
 x_temp_points <- seq(szp$start[1], szp$stop[szp.n], length.out = 100)
 df_norm_dist_plot <- data.frame(xs = x_temp_points, ys = dnorm(x_temp_points))
 ggplot(szp, aes(x = mid, y = frequency)) +
@@ -423,7 +496,18 @@ ggplot(szp, aes(x = mid, y = frequency)) +
   ggtitle("Title")
 ```
 
-```{r, eval = FALSE}
+Przeprowadźmy teraz mały eksperyment: przyjmujemy, że mamy całą populacje intensywności promieniowania ultrafioletowego
+kwazarów. Teraz w sposób losowy wybieramy z tej populacji próbę, składającą się z 20 elementów.
+Niech $\sigma_0$ - standardowe odchylenie całej populacji. Na podstawie próby 20-elementowej weryfikujemy hipotezę
+$H_0$, która twierdzi, że $\sigma_0$ - standardowe odchylenie całej populacji.
+Powtarzamy taki eksperyment 250 razy dla każdego z następujących poziomów ufności testu:
+$\{0.80,\ 0.90,\ 0.99,\ 0.999\}$, liczymy ilość testów, w których nie było podstaw do odrzucenia hipotezy $H_0$.
+
+W tabelce poniżej podano wyniki takiego eksperymentu.
+Zauważono, że tylko dla klasu kwazarów wartości praktyczne bardzo różnią się od wartości teoretycznych,
+dla pozostałych klas różnica jest o wiele mniejsza.
+
+```{r experiment, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=7, fig.height=7, eval = TRUE}
 y.n.samples <- 250
 y.sample.size <- 20
 y <- df[df$class == "Quasar", "u"]
@@ -444,12 +528,16 @@ df_var_test <- data.frame(a = c("80.0%", "90.0%", "99.0%", "99.9%"),
                             sum(k90[1] <= df_y_samples$ys & df_y_samples$ys <= k90[2]) / y.n.samples * 100,
                             sum(k99[1] <= df_y_samples$ys & df_y_samples$ys <= k90[2]) / y.n.samples * 100,
                             sum(k999[1] <= df_y_samples$ys & df_y_samples$ys <= k999[2]) / y.n.samples * 100
-                          ), "%"))
-colnames(df_var_test) <- c("Przedzial", "Ile trafilo?")
+                          ), "%"),
+                          k1 = c(k80[1], k90[1], k99[1], k999[1]),
+                          k2 = c(k80[2], k90[2], k99[2], k999[2]))
+colnames(df_var_test) <- c("Poziom istotności", "Ile trafilo?", "k1", "k2")
 df_var_test
 ```
 
-```{r, eval = FALSE}
+Na poniższym rysunku podano wizualizację przeprowadzonego eksperymentu.
+
+```{r plot-experiment, message = FALSE, results = FALSE, warning = FALSE, dpi=50, fig.width=8, fig.height=4.5, eval = TRUE}
 ggplot(df_y_samples, aes(x = xs, y = ys)) +
   geom_line(color = "black") +
   geom_hline(yintercept = k80, linetype = "dashed", color = "red") +
